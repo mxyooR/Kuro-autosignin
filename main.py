@@ -101,7 +101,7 @@ def sign_in():
         print(name+"签到完毕")
 
         # 发送微信通知
-        print(sc_send(name+"签到",wechattext,key='SCT169198T4eUrinSpuBs9IxuuHRTz5BMY'))
+        print(sc_send(name+"签到",wechattext,key=''))
     
         
         
