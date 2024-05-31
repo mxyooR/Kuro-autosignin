@@ -222,8 +222,8 @@ def getsignprize(token, roleId, userId):
     data = response_data["data"]
     
     if isinstance(data, list) and len(data) > 0:
-        goods_names = [item["goodsName"] for item in data]
-        return goods_names  # 返回所有 goodsName 的列表
+        first_goods_name = data[0]["goodsName"]
+        return first_goods_name
     
     return ("数据格式不正确或数据为空")
 

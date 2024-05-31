@@ -31,6 +31,12 @@ def sign_in():
 
         
 
+        data = {
+            "gameId": "3",
+            "serverId": "76402e5b20be2c39f095a152090afddc",
+            "roleId": roleId,
+            "userId": userId
+        }
 
         
         
@@ -42,8 +48,14 @@ def sign_in():
         print(name)
         print("=====================================")
         response0=mingchaosignin(tokenraw,roleId,userId,month)
-        print(response0)
-        wechattext=wechattext+str(response0)+"\n\n"
+        if response0:
+
+            print("今天的奖励为：" + response0)
+            wechattext=wechattext+"今天的奖励为："+response0+"\n\n"
+        else:
+            print("签到失败或没有奖励")
+            
+        
         print("=====================================")
         time.sleep(1)
 
@@ -89,17 +101,16 @@ def sign_in():
         print(name+"签到完毕")
 
         # 发送微信通知
-        print(sc_send(name+"签到",wechattext,key='yourkey'))
+        print(sc_send(name+"签到",wechattext,key='SCT169198T4eUrinSpuBs9IxuuHRTz5BMY'))
     
         
         
 
 
-
-schedule.every().day.at("09:00").do(sign_in)
+# Schedule the sign_in function to run at 8 AM every day
+schedule.every().day.at("08:00").do(sign_in)
 
 while True:
     #schedule.run_pending()
     schedule.run_pending()
-
     time.sleep(1)
