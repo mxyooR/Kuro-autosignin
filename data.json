@@ -1,7 +1,8 @@
 {
+    "serverKey": "这里是Server酱的Key",
     "users": [
 
-        {   
+        {
             "name" : "被签到者的姓名",
             "roleId": "可以抓包获取 鸣潮的uid",
             "tokenraw": "抓包获取的token",
