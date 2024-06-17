@@ -414,4 +414,5 @@ def sign_in():
         print(sc_send(name+"签到", wechattext, key=serverKey))
 
 
-sign_in()
+if __name__ == "__main__":
+    sign_in()
