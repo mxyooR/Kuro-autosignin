@@ -8,6 +8,7 @@ import time
 import datetime
 import json
 import requests
+from log import log_message
 
 
 def sc_send(text, desp, key=''):
@@ -355,27 +356,27 @@ def sign_in():
 
         print(now.strftime("%Y-%m-%d"))
         wechattext = wechattext+now.strftime("%Y-%m-%d")+" "+name+"签到\n\n"
-        print(name)
-        print("=====================================")
+        log_message(name)
+        log_message("=====================================")
         response0 = mingchaosignin(tokenraw, roleId, userId, month)
         if response0:
 
-            print("今天的奖励为：" + response0)
+            log_message("今天的奖励为：" + response0)
             wechattext = wechattext+"今天的奖励为："+response0+"\n\n"
         else:
-            print("签到失败或没有奖励")
+            log_message("签到失败或没有奖励")
 
-        print("=====================================")
+        log_message("=====================================")
         time.sleep(1)
 
         # 库街区签到
 
         response1 = bbssignin(tokenraw)
         wechattext = wechattext+str(response1)+"\n\n"
-        print(response1)
-        print("=====================================")
+        log_message(response1)
+        log_message("=====================================")
         time.sleep(1)
-        print("签到完毕，开始点赞帖子")
+        log_message("签到完毕，开始点赞帖子")
         wechattext = wechattext+"签到完毕，开始点赞帖子\n\n"
 
         idlist = getbbsforum(tokenraw, devcode)
@@ -385,7 +386,7 @@ def sign_in():
         for postid, userid in post_user_pairs:
             getpostdetail(tokenraw, devcode, postid)
             time.sleep(5)
-            print("第"+str((i+1))+"个帖子" +
+            log_message("第"+str((i+1))+"个帖子" +
                   likeposts(tokenraw, devcode, postid, userid))
             wechattext = wechattext+"第" + \
                 str((i+1))+"个帖子" + \
@@ -394,24 +395,24 @@ def sign_in():
             i += 1
             if i > 4:
                 break
-        print("=====================================")
+        log_message("=====================================")
 
         # 转发帖子
-        print("点赞完毕，开始转发帖子")
+        log_message("点赞完毕，开始转发帖子")
         wechattext = wechattext+"点赞完毕，开始转发帖子\n\n"
-        print(shareposts(tokenraw, devcode))
+        log_message(shareposts(tokenraw, devcode))
         wechattext = wechattext+shareposts(tokenraw, devcode)+"\n\n"
-        print("=====================================")
+        log_message("=====================================")
 
         # 获取金币数量
         gold = getTotalGold(tokenraw, devcode)
         goldnum = gold["data"]["goldNum"]
-        print("现在剩余："+str(goldnum)+"金币")
+        log_message("现在剩余："+str(goldnum)+"金币")
         wechattext = wechattext+"现在剩余："+str(goldnum)+"金币\n\n"
-        print(name+"签到完毕")
+        log_message(name+"签到完毕")
 
         # 发送微信通知
-        print(sc_send(name+"签到", wechattext, key=serverKey))
+        log_message(sc_send(name+"签到", wechattext, key=serverKey))
 
 
 if __name__ == "__main__":
