@@ -1,5 +1,6 @@
 {
     "serverKey": "这里是Server酱的Key",
+    "distinct_id": "抓包获取",
     "users": [
 
         {
