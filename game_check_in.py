@@ -97,7 +97,7 @@ def zhanshuangsignin(eeeroleId, userId, month,gameheaders):
         return (f"请求失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}")
     # 如果成功，调用 getsignprize 获取奖品列表
     try:
-        goods_names = getsignprize(gameheaders,3, 1000,eeeroleId, userId)
+        goods_names = getsignprize(gameheaders,2, 1000,eeeroleId, userId)
         return goods_names
     except ValueError as e:
         print(f"获取奖品失败: {e}")
