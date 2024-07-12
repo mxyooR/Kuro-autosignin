@@ -9,7 +9,7 @@ import datetime
 import json
 import requests
 from log import log_message
-from game_check_in import game_check_in
+from game_check_in import ww_game_check_in,eee_game_check_in
 from bbs_sgin_in import KuroBBS_sign_in
 
 
@@ -39,16 +39,20 @@ def sign_in():
     for user in users:
         server_message = ""
         name = user['name']
-        roleId = user['roleId']
+        wwroleId = user['wwroleId']
+        eeeroleId = user['eeeroleId']
         tokenraw = user['tokenraw']
         userId = user['userId']
         devcode = user['devCode']
 
         log_message(name+"开始签到")
         # 鸣潮签到
-        
         server_message = server_message+now.strftime("%Y-%m-%d")+" "+name+"签到\n\n"
-        server_message = server_message+"今天的奖励为："+game_check_in(tokenraw, roleId, userId, month)+"\n\n"
+        if wwroleId != "":
+            server_message = server_message+"今天的奖励为："+ww_game_check_in(tokenraw, wwroleId, userId, month)+"\n\n"
+        # 战双签到
+        if eeeroleId != "":
+            server_message = server_message+"今天的奖励为："+eee_game_check_in(tokenraw, eeeroleId, userId, month)+"\n\n"
         time.sleep(1)
 
         # 库街区签到
