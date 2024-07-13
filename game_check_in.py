@@ -123,7 +123,7 @@ def ww_game_check_in(token, wwroleId, userId, month):
 def eee_game_check_in(token, eeeroleId, userId, month):
     log_message("开始战双签到")
     gameheaders = getgameheaders(token)
-    gamemessage=zhanshuangsignin(2, eeeroleId, userId, month,gameheaders)
+    gamemessage=zhanshuangsignin(eeeroleId, userId, month,gameheaders)
     if gamemessage:
         log_message("今天的奖励为：" + gamemessage)
     else:
