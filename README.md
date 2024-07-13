@@ -4,10 +4,11 @@
 
 ## 使用说明
 
-1. **替换个人信息**：请通过抓库街区的包替换脚本中的 `token`、`devcode`、 `roleId`、 `userId` 和 `distinct_id`。
+1. **替换个人信息**：请通过抓库街区的包替换脚本中的 `token`、`devcode`、 `wwroleId`、`eeeroleId`、 `userId` 和 `distinct_id`。`wwroleId`、`eeeroleId`如只需要签到一个则另一个空着。
 2. **获取 Token**：使用 `tools.py` 来获取你的 `token`（此方法用于不想折腾安卓抓包并且客户端不能再次登录，库街区的 token 如果新设备登陆了会刷新）；或者直接抓包。
 3. **已对接 Server 酱**：在 `data.json` 中的 `serverKey` 字段中填入 Server 酱 Key，激活即时通知服务。
 4. **云函数支持**：入口为 `index.handler`。
+5. **serverid设置**：战双serverid如果不对请自行抓包更正。
 
 ## 环境依赖
 
@@ -28,7 +29,7 @@
 ## 青龙面板运行方法
 
 1. **拉取项目到本地**：将项目克隆到本地目录。
-2. **获取个人信息**：捕获库街区的包，获取并填写好 `data.json` 中的 `token`、`devcode`、`roleId`、`userId` 和 `distinct_id`。
+2. **获取个人信息**：捕获库街区的包，获取并填写好 `data.json` 中的 `token`、`devcode`、`wwroleId`、`eeeroleId`、`userId` 和 `distinct_id`。
 3. **创建订阅**：在青龙面板中创建新的订阅任务。
    - 名称：库街区签到
    - 类型：公开仓库
