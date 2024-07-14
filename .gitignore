@@ -2,4 +2,6 @@ data.json
 push.ini
 kurolog.log
 *.log
-/_pycache_
+__pycache__/
+*.pyc
+*.pyo

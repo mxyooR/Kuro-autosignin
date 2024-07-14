@@ -380,8 +380,8 @@ def wintoast(send_title, push_message):
 def push(push_message):
     if not load_config():
         return 1
-    if not cfg.getboolean('setting', 'enable'):
-        return 0
+    #if not cfg.getboolean('setting', 'enable'):
+        #return 0
     log_message("正在执行推送......")
     func_names = cfg.get('setting', 'push_server').lower()
     for func_name in func_names.split(","):
@@ -400,4 +400,4 @@ def push(push_message):
 
 
 if __name__ == "__main__":
-    push(0, f'推送验证{int(time.time())}')
+    push(f'推送验证{int(time.time())}')

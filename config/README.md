@@ -18,7 +18,6 @@
 
 ```ini
 [setting]
-enable=true
 push_server=wecom
 
 [wecom]
