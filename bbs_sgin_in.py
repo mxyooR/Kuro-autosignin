@@ -151,11 +151,10 @@ def KuroBBS_sign_in(token, devcode,distinct_id):
     bbsheaders = getbbsheaders(token, devcode,distinct_id)
     # 库街区签到
     msg = ""
-    msg = msg+str(bbssignin(bbsheaders))+"\n\n"
-    log_message(msg)
+    msg = msg+log_message(str(bbssignin(bbsheaders)))+"\n\n"
     time.sleep(1)
-    log_message("签到完毕，开始点赞帖子")
-    msg = msg+"签到完毕，开始点赞帖子\n\n"
+    log_message("库街区签到完毕，开始点赞帖子")
+    msg = msg+"库街区签到完毕，开始点赞帖子\n\n"
 
     idlist = getbbsforum(bbsheaders)
     post_user_pairs = [(post["postId"], post["userId"])
@@ -165,10 +164,7 @@ def KuroBBS_sign_in(token, devcode,distinct_id):
     for postid, userid in post_user_pairs:
         getpostdetail(postid, bbsheaders)
         time.sleep(5)
-        log_message("第"+str((i+1))+"个帖子" +likeposts(postid, userid,bbsheaders))
-        msg = msg+"第" + \
-            str((i+1))+"个帖子" + \
-            str(likeposts(postid, userid,bbsheaders))+"\n\n"
+        msg += log_message("第"+str((i+1))+"个帖子" +likeposts(postid, userid,bbsheaders))+"\n\n"
         time.sleep(3)
         i += 1
         if i > 4:

@@ -21,4 +21,5 @@ def log_message(message, log_file='kurolog.log'):
    
     setup_logger(log_file)
     logging.info(message)
+    return message
 

@@ -1,0 +1,5 @@
+data.json
+push.ini
+kurolog.log
+*.log
+_pycache_

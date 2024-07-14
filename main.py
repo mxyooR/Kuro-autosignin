@@ -7,37 +7,28 @@ cron: 1 9 * * *
 import time
 import datetime
 import json
-import requests
 from log import log_message
 from game_check_in import ww_game_check_in,eee_game_check_in
 from bbs_sgin_in import KuroBBS_sign_in
+from push import push
+import os
 
-
-def sc_send(text, desp, key=''):
-    if key == '':
-        print("请填写server酱的KEY")
-        return
-    url = f'https://sctapi.ftqq.com/{key}.send'
-    data = {'text': text, 'desp': desp}
-    response = requests.post(url, data=data)
-    result = response.text
-    return result
-
+FILE_PATH = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = FILE_PATH + '/config/data.json'
 
 def sign_in():
     now = datetime.datetime.now()
     month = now.strftime("%m")
 
     # 从JSON文件中读取数据
-    with open('data.json', 'r', encoding="utf-8") as f:
+    with open(DATA_PATH, 'r', encoding="utf-8") as f:
         data = json.load(f)
-    serverKey = data['serverKey']
+
     distinct_id = data['distinct_id']
     # 从数据中获取用户数据列表
     users = data['users']
-
+    server_message = ""
     for user in users:
-        server_message = ""
         name = user['name']
         wwroleId = user['wwroleId']
         eeeroleId = user['eeeroleId']
@@ -56,11 +47,15 @@ def sign_in():
         time.sleep(1)
 
         # 库街区签到
-        server_message=server_message+KuroBBS_sign_in(tokenraw, devcode,distinct_id)
-        log_message(name+"签到成功")
-        # 发送server酱通知
-        log_message(sc_send(name+"签到", server_message, key=serverKey))
+        server_message+=KuroBBS_sign_in(tokenraw, devcode,distinct_id)
+        server_message+=name+"签到结束"
+        log_message(name+"签到结束")
         log_message("=====================================")
+        print(server_message)
+
+    print(server_message)
+    # 发送推送通知
+    push(server_message)
 
 
 if __name__ == "__main__":
