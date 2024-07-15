@@ -272,8 +272,7 @@ def bark(send_title, push_message):
     send_title = urllib.parse.quote_plus(send_title)
     push_message = urllib.parse.quote_plus(push_message)
     rep = http.get(
-        url=f'{cfg.get("bark", "api_url")}/{cfg.get("bark", "token")}/{send_title}/{push_message}?icon=https://cdn'
-            f'.jsdelivr.net/gh/tanmx/pic@main/mihoyo/{cfg.get("bark", "icon")}.png'
+        url=f'{cfg.get("bark", "api_url")}/{cfg.get("bark", "token")}/{send_title}/{push_message}?icon=https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png'
     ).json()
     log_message(f"推送结果：{rep.get('message')}")
 
@@ -351,15 +350,15 @@ def discord(send_title, push_message):
                   "description": push_message,
                   "color": 1926125,
                   "author": {
-                    "name": "MihoyoBBSTools",
-                    "url": "https://github.com/Womsxd/MihoyoBBSTools",
-                    "icon_url": "https://github.com/DGP-Studio/Snap.Hutao.Docs/blob/main/docs/.vuepress/public/images/202308/hoyolab-miyoushe-Icon.png?raw=true"
+                    "name": "Kuro-autosigin",
+                    "url": "https://github.com/mxyooR/Kuro-autosignin",
+                    "icon_url": "https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png"
                   },
                   "timestamp": datetime.now(timezone.utc).astimezone(pytz.timezone('Asia/Shanghai')).isoformat()
                 }
               ],
-            "username": "MihoyoBBSTools",
-            "avatar_url": "https://github.com/DGP-Studio/Snap.Hutao.Docs/blob/main/docs/.vuepress/public/images/202308/hoyolab-miyoushe-Icon.png?raw=true",
+            "username": "Kuro-autosigin",
+            "avatar_url": "https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png",
             "attachments": []
             }
     )
@@ -371,7 +370,7 @@ def discord(send_title, push_message):
 def wintoast(send_title, push_message):
     try:
         from win11toast import toast
-        toast(app_id="MihoyoBBSTools",title=send_title,body=push_message,icon='')
+        toast(app_id="Kuro-autosigin",title=send_title,body=push_message,icon='')
     except:
         log_message(f"请先pip install win11toast再使用win通知")
     
