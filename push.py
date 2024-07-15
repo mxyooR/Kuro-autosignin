@@ -86,7 +86,7 @@ http = get_new_session()
 def load_config():
     config_path = INI_PATH
     if os.path.exists(config_path):
-        cfg.read(config_path, encoding='utf-8')
+        cfg.read(config_path, encoding='utf-8-sig')
         return True
     else:
         return False
