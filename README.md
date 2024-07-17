@@ -41,7 +41,7 @@
    - 定时类型：crontab
    - 定时规则：1 9 * * *
    - 白名单：main.py
-   - 依赖文件：log|game_check_in|bbs_sgin_in
+   - 依赖文件：log|game_check_in|bbs_sgin_in|push
 
 4. **导入 `data.json`**：在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `data.json` 文件。
 5. **添加依赖**：在青龙面板的依赖管理里面安装requests依赖。
