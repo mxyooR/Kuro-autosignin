@@ -21,7 +21,7 @@ def sign_in():
     month = now.strftime("%m")
 
     # 从JSON文件中读取数据
-    with open(DATA_PATH, 'r', encoding="utf-8") as f:
+    with open(DATA_PATH, 'r', encoding="utf-8-sig") as f:
         data = json.load(f)
 
     distinct_id = data['distinct_id']
