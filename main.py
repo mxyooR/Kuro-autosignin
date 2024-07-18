@@ -10,7 +10,6 @@ import json
 from log import log_message
 from game_check_in import ww_game_check_in,eee_game_check_in
 from bbs_sgin_in import KuroBBS_sign_in
-from push import push
 import os
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -21,12 +20,13 @@ def sign_in():
     month = now.strftime("%m")
 
     # 从JSON文件中读取数据
-    with open(DATA_PATH, 'r', encoding="utf-8-sig") as f:
+    with open(DATA_PATH, 'r', encoding="utf-8") as f:
         data = json.load(f)
 
     distinct_id = data['distinct_id']
     # 从数据中获取用户数据列表
     users = data['users']
+    checkpush = data['push']
     server_message = ""
     for user in users:
         name = user['name']
@@ -35,7 +35,6 @@ def sign_in():
         tokenraw = user['tokenraw']
         userId = user['userId']
         devcode = user['devCode']
-        checkpush = user['push']
 
         log_message(name+"开始签到")
         # 鸣潮签到
@@ -55,6 +54,7 @@ def sign_in():
 
     
     if checkpush:
+        from push import push
         push(server_message)
 
 if __name__ == "__main__":
