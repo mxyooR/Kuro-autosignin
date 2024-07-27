@@ -135,7 +135,7 @@ def bbssignin(bbsheaders):
     headers = bbsheaders
 
     databbs = {
-        "gameId": "3",
+        "gameId": "2",
     }
     response = requests.post(urlbbssignin, headers=headers, data=databbs)
     if response.json()["code"] == 200:
@@ -178,9 +178,15 @@ def KuroBBS_sign_in(token, devcode,distinct_id):
     # 获取金币数量
     totalgoldheaders = gettotalgoldheaders(token,devcode,distinct_id)
     gold = getTotalGold(totalgoldheaders)
-    goldnum = gold["data"]["goldNum"]
-    log_message("现在剩余："+str(goldnum)+"金币")
-    msg = msg+"现在剩余："+str(goldnum)+"金币\n\n"
+    try:
+        goldnum = gold["data"]["goldNum"]
+        log_message("现在剩余："+str(goldnum)+"金币")
+        msg = msg+"现在剩余："+str(goldnum)+"金币\n\n"
+    except KeyError:
+        gold = getTotalGold(totalgoldheaders)
+        log_message("获取金币失败")
+        msg = msg+"获取金币失败\n\n"
+    
 
     
     return msg

@@ -124,3 +124,16 @@ if __name__ == "__main__":
         "serverId": dataResponse["serverId"],
     }
     logger.info(f"Get login Info ==> \n{meta}")
+
+    #写入配置文件
+    """
+    write_config = input("是否写入配置文件？ (Y/N): ").strip().lower()
+    
+    if write_config == "y":
+        config_path = "../config/data.json"
+        with open(config_path, "w") as f:
+            json.dump(meta, f, ensure_ascii=False, indent=4)
+        logger.info(f"配置文件已写入 {config_path}")
+    else:
+        logger.info("配置文件未写入")
+    """
