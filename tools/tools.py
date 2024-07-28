@@ -1,6 +1,7 @@
 import time
 
 import requests
+import uuid
 from loguru import logger
 
 from utils import geeUtils
@@ -35,9 +36,6 @@ def sendSMSCode(phoneNumber: str, deviceCode: str, captcha_id: str):
     data = {"mobile": phoneNumber, "geeTestData": seccode}
     response = requests.post(url, headers=headers, data=data)
     return response.json()
-
-
-# Step 3: Perform login with the SMS code
 
 
 def sdkLogin(phoneNumber: str, smsCode: str, deviceCode: str):
@@ -116,12 +114,14 @@ if __name__ == "__main__":
     token = loginResponse["token"]
     userId = loginResponse["userId"]
     dataResponse = getData(token=token, deviceCode=deviceId)
+    random_uuid = uuid.uuid4()
     meta = {
         "token": token,
         "userId": userId,
         "roleId": dataResponse["roleId"],
         "roleName": dataResponse["roleName"],
         "serverId": dataResponse["serverId"],
+        "deviceCode": random_uuid,
     }
     logger.info(f"Get login Info ==> \n{meta}")
 
