@@ -1,6 +1,19 @@
 import requests
 from log import log_message
 import time
+import socket
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # 连接到一个公共的服务器，这里使用 Google 的 DNS 服务器
+        s.connect(('8.8.8.8', 80))
+        ip_address = s.getsockname()[0]
+    except socket.error:
+        ip_address = '127.0.0.1'
+    finally:
+        s.close()
+    return ip_address
 
 
 def gettotalgoldheaders(token,devcode,distinct_id):
@@ -10,7 +23,7 @@ def gettotalgoldheaders(token,devcode,distinct_id):
         "lang": "zh-Hans",
         "User-Agent": "KuroGameBox/48 CFNetwork/1492.0.1 Darwin/23.3.0",
         "Cookie": "user_token="+token,
-        "Ip": "127.0.0.1",
+        "Ip": get_ip_address(),
         "channelId": "1",
         "channel": "appstore",
         "distinct_id": distinct_id,
@@ -36,7 +49,7 @@ def getbbsheaders(token, devcode,distinct_id):
         "lang": "zh-Hans",
         "User-Agent": "KuroGameBox/48 CFNetwork/1492.0.1 Darwin/23.3.0",
         "Cookie": "user_token="+token,
-        "Ip": "127.0.0.1",
+        "Ip": get_ip_address(),
         "channelId": "1",
         "channel": "appstore",
         "distinct_id": distinct_id,

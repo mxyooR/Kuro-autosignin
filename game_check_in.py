@@ -1,5 +1,6 @@
 import requests
 from log import log_message
+from bbs_sgin_in import get_ip_address
 
 # 获取游戏签到请求头
 def getgameheaders(token):
@@ -7,7 +8,7 @@ def getgameheaders(token):
         "Host": "api.kurobbs.com",
         "Accept": "application/json, text/plain, */*",
         "Sec-Fetch-Site": "same-site",
-        "devCode": "127.0.0.1, Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KuroGameBox/2.2.0",
+        "devCode": f"{get_ip_address()}, Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KuroGameBox/2.2.0",
         "source": "ios",
         "Accept-Language": "zh-CN,zh-Hans;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
