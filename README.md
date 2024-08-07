@@ -48,3 +48,10 @@
 6. **推送选项**：青龙面板可以使用青龙自带的推送，不必用本脚本自带的推送，如要使用，请填写push.ini放入/config目录下。
 
 这样设置完成后，青龙面板将会每天按时自动运行库街区的签到任务。
+
+## Github Action运行方法（暂不支持消息推送）
+
+1. **拉取项目到本地**：将项目克隆到本地目录。
+2. **获取个人信息**：捕获库街区的包，获取并填写好 `data.json` 中的 `distinct_id`、`name`、`wwroleId`、`eeeroleId`、`tokenraw` 、 `userId` 和 `devCode` 。
+3. Fork[本仓库](https://github.com/mxyooR/Kuro-autosignin)，点击` Settings` -> 点击选项卡 `Secrets and variables` -> 点击 `Actions` -> `New repository secret`，将第2步获得的信息分别新建并添加进去。
+4. 脚本每天中文12点自动执行，你也可以在 `Action` 中手动执行。
