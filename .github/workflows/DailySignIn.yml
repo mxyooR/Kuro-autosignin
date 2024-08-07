@@ -1,0 +1,25 @@
+name: DailySignIn
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  SignIn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+          
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 创建json
+        run: echo '{"push":1,"distinct_id":"${{ secrets.DISTINCT_ID }}","users":[{"name":"${{ secrets.NAME }}","wwroleId":"${{ secrets.WWROLEID }}","eeeroleId":"${{ secrets.EEEROLEID }}","tokenraw":"${{ secrets.TOKENRAW }}","userId":"${{ secrets.USERID }}","devCode":"${{ secrets.DEVCODE }}"}]}' > config/data.json
+
+      - name: 开始签到
+        run: python main.py
