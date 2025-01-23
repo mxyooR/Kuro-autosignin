@@ -122,6 +122,7 @@ if __name__ == "__main__":
         "roleName": dataResponse["roleName"],
         "serverId": dataResponse["serverId"],
         "deviceCode": random_uuid,
+        "distinctId": uuid.uuid4()
     }
     logger.info(f"Get login Info ==> \n{meta}")
 
