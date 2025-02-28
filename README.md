@@ -22,13 +22,11 @@
 - Python 环境
   - `pip install -r ./requirements.txt`
 
-若使用 `pip install -r ./requirements.txt` 安装失败，则按以下顺序进行单独安装依赖
+## 短信登录工具说明
 
-1. `pip install ddddocr`
-2. `pip install numpy==1.26.2` 请勿使用 numpy2，会报错
-3. `pip install PyExecJS`
-4. `pip install loguru`
-5. `pip install requests`
+现已将极验验证的接口转为图标点选，并重新编写参数加密部分。目前图片识别使用网上的模型以及`ddddocr`，成功率有点感人但凑活着用吧。若不通过可多尝试几次
+
+**图片处理部分代码来自**[Bump-mann/simple_ocr: 一个简单的识别验证码的代码](https://github.com/Bump-mann/simple_ocr)
 
 ## 青龙面板运行方法
 
