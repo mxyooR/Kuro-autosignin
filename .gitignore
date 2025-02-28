@@ -1,3 +1,5 @@
+.venv
+cache
 data.json
 push.ini
 kurolog.log
@@ -13,3 +15,7 @@ __pycache__/
 *.pyo
 *.pyd
 /research
+
+# tools
+static/pictures/
+static/tmp/
