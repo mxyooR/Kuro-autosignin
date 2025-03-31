@@ -15,7 +15,8 @@ __pycache__/
 *.pyo
 *.pyd
 /research
-
+/kuro-env
+*.cfg
 # tools
 static/pictures/
 static/tmp/

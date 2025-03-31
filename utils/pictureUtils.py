@@ -45,10 +45,16 @@ def cut_image(image: ImageFile, point: list, dstPath):
 
 
 def clean_background():
-    backgroundList = os.listdir(TMP_BACKGROUND_PATH)
-    for background in backgroundList:
-        backgroundPath = os.path.join(TMP_BACKGROUND_PATH, background)
-        os.remove(backgroundPath)
+    """
+    可能有的时候没有背景图片
+    """
+    try:
+        backgroundList = os.listdir(TMP_BACKGROUND_PATH)
+        for background in backgroundList:
+            backgroundPath = os.path.join(TMP_BACKGROUND_PATH, background)
+            os.remove(backgroundPath)
+    except:
+        pass
 
 
 def process_picture():
