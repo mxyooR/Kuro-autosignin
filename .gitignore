@@ -9,6 +9,7 @@ __pycache__/
 *.pyo
 
 __pycache__/
+.vscode
 
 
 *.pyc

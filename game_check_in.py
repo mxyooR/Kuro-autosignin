@@ -1,5 +1,5 @@
 import requests
-from log import log_message
+from log import log_info, log_debug, log_error
 from bbs_sgin_in import get_ip_address
 
 # 获取游戏签到请求头
@@ -19,114 +19,114 @@ def getgameheaders(token):
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) KuroGameBox/2.2.0",
         "Connection": "keep-alive"
     }
+    log_debug(f"生成游戏签到请求头: {gameheaders}")
     return gameheaders
 
-
-
-
 # 获取签到奖品
-def getsignprize(gameheaders, gameId,serverId,roleId, userId):
-    urlqueryRecord = "https://api.kurobbs.com/encourage/signIn/queryRecordV2"
-    headers = gameheaders
-    datasign = {
-        "gameId": gameId,
-        "serverId": serverId,
-        "roleId": roleId,
-        "userId": userId
-    }
-    response = requests.post(urlqueryRecord, headers=headers, data=datasign)
-    # 检查响应状态码
-    if response.status_code != 200:
-        return (f"请求失败，状态码: {response.status_code}, 消息: {response.text}")
-    response_data = response.json()
-    # 检查响应中的 code
-    if response_data.get("code") != 200:
-        return (f"请求失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}")
-    data = response_data["data"]
-    if isinstance(data, list) and len(data) > 0:
-        first_goods_name = data[0]["goodsName"]
-        return first_goods_name
-
-    return ("数据格式不正确或数据为空")
+def getsignprize(gameheaders, gameId, serverId, roleId, userId):
+    try:
+        urlqueryRecord = "https://api.kurobbs.com/encourage/signIn/queryRecordV2"
+        headers = gameheaders
+        datasign = {
+            "gameId": gameId,
+            "serverId": serverId,
+            "roleId": roleId,
+            "userId": userId
+        }
+        response = requests.post(urlqueryRecord, headers=headers, data=datasign)
+        response.raise_for_status()
+        log_debug(f"签到奖品响应: {response.text}")
+        response_data = response.json()
+        if response_data.get("code") != 200:
+            error_message = f"获取签到奖品失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}"
+            log_error(error_message)
+            return error_message
+        data = response_data["data"]
+        if isinstance(data, list) and len(data) > 0:
+            first_goods_name = data[0]["goodsName"]
+            log_info(f"成功获取签到奖品: {first_goods_name}")
+            return first_goods_name
+        error_message = "签到奖品数据格式不正确或数据为空"
+        log_error(error_message)
+        return error_message
+    except Exception as e:
+        error_message = f"获取签到奖品失败: {e}"
+        log_error(error_message)
+        return error_message
 
 # 鸣潮签到
 def mingchaosignin(gameheaders, wwroleId, userId, month):
-    urlsignin = "https://api.kurobbs.com/encourage/signIn/v2"
-    headers = gameheaders
-
-    datasign = {
-        "gameId": "3",
-        "serverId": "76402e5b20be2c39f095a152090afddc",
-        "roleId": wwroleId,
-        "userId": userId,
-        "reqMonth": month
-    }
-    response = requests.post(urlsignin, headers=headers, data=datasign)
-    # 检查响应状态码
-    if response.status_code != 200:
-        return (f"请求失败，状态码: {response.status_code}, 消息: {response.text}")
-    response_data = response.json()
-    # 检查响应中的 code
-    if response_data.get("code") != 200:
-        return (f"请求失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}")
-    # 如果成功，调用 getsignprize 获取奖品列表
     try:
-        goods_names = getsignprize(gameheaders,3, "76402e5b20be2c39f095a152090afddc",wwroleId, userId)
+        urlsignin = "https://api.kurobbs.com/encourage/signIn/v2"
+        headers = gameheaders
+
+        datasign = {
+            "gameId": "3",
+            "serverId": "76402e5b20be2c39f095a152090afddc",
+            "roleId": wwroleId,
+            "userId": userId,
+            "reqMonth": month
+        }
+        response = requests.post(urlsignin, headers=headers, data=datasign)
+        response.raise_for_status()
+        log_debug(f"鸣潮签到响应: {response.text}")
+        response_data = response.json()
+        if response_data.get("code") != 200:
+            error_message = f"鸣潮签到失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}"
+            log_error(error_message)
+            return error_message
+        # 如果成功，调用 getsignprize 获取奖品列表
+        goods_names = getsignprize(gameheaders, 3, "76402e5b20be2c39f095a152090afddc", wwroleId, userId)
         return goods_names
-    except ValueError as e:
-        print(f"获取奖品失败: {e}")
-        return None
-    
-#战双签到
-def zhanshuangsignin(eeeroleId, userId, month,gameheaders):
-    url = "https://api.kurobbs.com/encourage/signIn/v2"
-    headers = gameheaders
-    data = {
-        'gameId': 2,
-        'serverId': 1000,
-        'roleId': eeeroleId,
-        'userId': userId,
-        'reqMonth': month
-    }
-    response = requests.post(url, headers=headers, data=data)
-    # 检查响应状态码
-    if response.status_code != 200:
-        return (f"请求失败，状态码: {response.status_code}, 消息: {response.text}")
-    response_data = response.json()
-    # 检查响应中的 code
-    if response_data.get("code") != 200:
-        return (f"请求失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}")
-    # 如果成功，调用 getsignprize 获取奖品列表
+    except Exception as e:
+        error_message = f"鸣潮签到失败: {e}"
+        log_error(error_message)
+        return error_message
+
+# 战双签到
+def zhanshuangsignin(eeeroleId, userId, month, gameheaders):
     try:
-        goods_names = getsignprize(gameheaders,2, 1000,eeeroleId, userId)
+        url = "https://api.kurobbs.com/encourage/signIn/v2"
+        headers = gameheaders
+        data = {
+            'gameId': 2,
+            'serverId': 1000,
+            'roleId': eeeroleId,
+            'userId': userId,
+            'reqMonth': month
+        }
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()
+        log_debug(f"战双签到响应: {response.text}")
+        response_data = response.json()
+        if response_data.get("code") != 200:
+            error_message = f"战双签到失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}"
+            log_error(error_message)
+            return error_message
+        # 如果成功，调用 getsignprize 获取奖品列表
+        goods_names = getsignprize(gameheaders, 2, 1000, eeeroleId, userId)
         return goods_names
-    except ValueError as e:
-        print(f"获取奖品失败: {e}")
-        return None
+    except Exception as e:
+        error_message = f"战双签到失败: {e}"
+        log_error(error_message)
+        return error_message
 
-
-
-
-
-
-    
 def ww_game_check_in(token, wwroleId, userId, month):
-    log_message("开始鸣潮签到")
+    log_info("开始鸣潮签到")
     gameheaders = getgameheaders(token)
-    gamemessage=mingchaosignin(gameheaders, wwroleId, userId, month)
+    gamemessage = mingchaosignin(gameheaders, wwroleId, userId, month)
     if gamemessage:
-        
-        log_message("今天的奖励为：" + gamemessage)
+        log_info(f"鸣潮签到成功，今天的奖励为: {gamemessage}")
     else:
-        log_message("签到失败或没有奖励")
+        log_error("鸣潮签到失败或没有奖励")
     return gamemessage
 
 def eee_game_check_in(token, eeeroleId, userId, month):
-    log_message("开始战双签到")
+    log_info("开始战双签到")
     gameheaders = getgameheaders(token)
-    gamemessage=zhanshuangsignin(eeeroleId, userId, month,gameheaders)
+    gamemessage = zhanshuangsignin(eeeroleId, userId, month, gameheaders)
     if gamemessage:
-        log_message("今天的奖励为：" + gamemessage)
+        log_info(f"战双签到成功，今天的奖励为: {gamemessage}")
     else:
-        log_message("签到失败或没有奖励")
+        log_error("战双签到失败或没有奖励")
     return gamemessage
