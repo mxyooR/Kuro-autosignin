@@ -10,7 +10,7 @@ import json
 import argparse
 from log import setup_logger, log_info, log_error
 import logging
-from game_check_in import ww_game_check_in, eee_game_check_in
+from game_check_in import GameCheckIn
 from bbs_sgin_in import KuroBBS
 import os
 
@@ -49,12 +49,14 @@ def sign_in():
     users = data['users']
     checkpush = data['push']
     server_message = ""
+    success_users = []  # 记录签到成功的用户
+    error_users = []    # 记录签到过程中发生错误的用户
 
     for user in users:
         if user["is_enable"] != True:
             log_info(f"{user['name']} 已禁用，跳过签到")
             log_info("=====================================")
-            server_message += f"{now.strftime('%Y-%m-%d')} {user['name']} 已禁用，跳过签到\n\n"
+            server_message += f"{now.strftime('%Y-%m-%d')} {user['name']} 已禁用，跳过签到\n"
             continue
 
         name = user['name']
@@ -65,51 +67,87 @@ def sign_in():
         devcode = user['devCode']
 
         log_info(f"{name} 开始签到")
-        server_message += f"{now.strftime('%Y-%m-%d')} {name} 签到\n\n"
+        server_message += f"{now.strftime('%Y-%m-%d')} {name} 签到\n"
+        try:
+            # 实例化游戏签到类
+            GameCheck = GameCheckIn(tokenraw)
+            # 鸣潮签到
+            if wwroleId:
+                log_info(f"{name} 开始鸣潮签到")
+                server_message += f"{name} 开始鸣潮签到\n"
+                ww_msg = GameCheck.sign_in(
+                    game_id=3,
+                    server_id="76402e5b20be2c39f095a152090afddc",
+                    role_id=wwroleId,
+                    user_id=userId,
+                    month=month
+                )
+                if "登录已过期" or "用户信息异常" in ww_msg:
+                    log_error(f"{name} 用户登录信息已失效，禁用该用户")
+                    server_message += f"{name} 用户登录信息已失效，禁用该用户\n"
+                    user["is_enable"] = False
+                    update_user_status(user)  # 更新该用户状态
+                    error_users.append(name)
+                    continue
+                server_message += f"{ww_msg}\n"
 
-        # 鸣潮签到
-        if wwroleId:
-            ww_msg = ww_game_check_in(tokenraw, wwroleId, userId, month)
-            if "登录已过期" in ww_msg:
-                log_error(f"{name} 鸣潮签到失败，禁用该用户")
-                server_message += f"{name} 库街区签到失败，禁用该用户\n\n"
+            # 战双签到
+            if eeeroleId:
+                log_info(f"{name} 开始战双签到")
+                server_message += f"{name} 开始战双签到\n"
+                ee_msg = GameCheck.sign_in(
+                    game_id=2,
+                    server_id=1000,
+                    role_id=eeeroleId,
+                    user_id=userId,
+                    month=month
+                )
+                if "登录已过期" or "用户信息异常" in ee_msg:
+                    log_error(f"{name} 用户登录信息已失效，禁用该用户")
+                    server_message += f"{name} 用户登录信息已失效，禁用该用户\n"
+                    user["is_enable"] = False
+                    update_user_status(user)  # 更新该用户状态
+                    error_users.append(name)
+                    continue
+                server_message += f"{ee_msg}\n"
+
+            time.sleep(1)
+
+            # 库街区签到
+            krbbs = KuroBBS(tokenraw, devcode, distinct_id)
+            kuro_msg = krbbs.sign_in()
+            if "登录已过期" or "用户信息异常" in kuro_msg:
+                log_error(f"{name} 用户登录信息已失效，禁用该用户")
+                server_message += f"{name} 用户登录信息已失效，禁用该用户\n"
                 user["is_enable"] = False
                 update_user_status(user)  # 更新该用户状态
+                error_users.append(name)
                 continue
-            server_message += f"鸣潮签到奖励：{ww_msg}\n\n"
+            server_message += kuro_msg
+            server_message += f"{name} 签到结束\n"
+            server_message += "=====================================\n"
+            log_info(f"{name} 签到结束")
+            log_info("=====================================")
+            success_users.append(name)  # 签到成功的用户
 
-        # 战双签到
-        if eeeroleId:
-            ee_msg = eee_game_check_in(tokenraw, eeeroleId, userId, month)
-            if "登录已过期" in ee_msg:
-                log_error(f"{name} 战双签到失败，禁用该用户")
-                server_message += f"{name} 库街区签到失败，禁用该用户\n\n"
-                user["is_enable"] = False
-                update_user_status(user)  # 更新该用户状态
-                continue
-            server_message += f"战双签到奖励：{ee_msg}\n\n"
+        except Exception as e:
+            log_error(f"{name} 签到过程中发生错误: {e}")
+            server_message += f"{name} 签到过程中发生错误: {e}\n"
+            error_users.append(name)
 
-        time.sleep(1)
-
-        # 库街区签到
-        krbbs = KuroBBS(tokenraw, devcode, distinct_id)
-        kuro_msg = krbbs.sign_in()
-        if "登录已过期" in kuro_msg:
-            log_error(f"{name} 库街区签到失败，禁用该用户")
-            server_message += f"{name} 库街区签到失败，禁用该用户\n\n"
-            user["is_enable"] = False
-            update_user_status(user)  # 更新该用户状态
-            continue
-        server_message += kuro_msg + "\n\n"
-        server_message += f"{name} 签到结束\n\n"
-        server_message += "=====================================\n\n"
-        log_info(f"{name} 签到结束")
-        log_info("=====================================")
+    # 总结签到结果
+    summary_message = "签到结果总结：\n"
+    summary_message += f"签到成功的用户: {', '.join(success_users) if success_users else '无'}\n"
+    summary_message += f"签到失败的用户: {', '.join(error_users) if error_users else '无'}\n"
+    log_info(summary_message)
+    server_message += summary_message
 
     # 推送签到结果
     if checkpush:
         from push import push
         push(server_message)
+
+
 
 if __name__ == "__main__":
     args = parse_arguments()

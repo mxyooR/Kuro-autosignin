@@ -1,8 +1,7 @@
 import requests
 from log import log_info, log_debug, log_error
 import time
-import random
-import socket
+from tools import get_ip_address
 
 class KuroBBS:
     def __init__(self, token, devcode, distinct_id):
@@ -17,22 +16,8 @@ class KuroBBS:
         self.distinct_id = distinct_id
         self.bbsheaders = self.get_bbs_headers()
 
-    @staticmethod
-    def get_ip_address():
-        """
-        获取本机 IP 地址
-        :return: 本机 IP 地址
-        日志记录：无
-        """
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.connect(('8.8.8.8', 80))
-            ip_address = s.getsockname()[0]
-        except socket.error:
-            ip_address = '127.0.0.1'
-        finally:
-            s.close()
-        return ip_address
+
+
 
     def get_bbs_headers(self):
         """
@@ -46,7 +31,7 @@ class KuroBBS:
             "lang": "zh-Hans",
             "User-Agent": "KuroGameBox/48 CFNetwork/1492.0.1 Darwin/23.3.0",
             "Cookie": f"user_token={self.token}",
-            "Ip": self.get_ip_address(),
+            "Ip": get_ip_address(),
             "channelId": "1",
             "channel": "appstore",
             "distinct_id": self.distinct_id,
@@ -225,6 +210,32 @@ class KuroBBS:
             log_error(error_message)
             return error_message
 
+    def bbssignin(self):
+        """
+        执行库街区签到
+        :return: 签到结果或错误信息
+        日志记录：
+            - debug: 库街区签到响应
+            - info: 成功完成签到
+            - error: 签到失败
+        """
+        try:
+            url = "https://api.kurobbs.com/user/signIn"
+            data = {"gameId": "2"}
+            response = requests.post(url, headers=self.bbsheaders, data=data)
+            response.raise_for_status()
+            log_debug(f"库街区签到响应: {response.text}")
+            if response.json()["code"] == 200:
+                log_info("成功完成签到")
+                return "签到成功"
+            else:
+                log_error(f"签到失败: {response.text}")
+                return "签到失败"
+        except Exception as e:
+            error_message = f"签到失败: {e}"
+            log_error(error_message)
+            return error_message
+
     def sign_in(self):
         """
         执行库街区签到流程
@@ -254,28 +265,28 @@ class KuroBBS:
                     log_info(f"开始处理任务: {remark}")
 
                     if remark == "用户签到":
-                        signin_result = self.sign_in()
-                        msg += f"签到结果: {signin_result}\n\n"
+                        signin_result = self.bbssignin()  # 修复：调用 bbssignin 而不是递归调用 sign_in
+                        msg += f"签到结果: {signin_result}\n"
 
                     elif remark == "浏览3篇帖子":
                         idlist = self.get_bbs_forum()
                         if isinstance(idlist, str):  # 如果返回的是错误信息
                             log_error(idlist)
-                            msg += idlist + "\n\n"
+                            msg += idlist + "\n"
                         elif idlist:
                             post_user_pairs = [(post["postId"], post["userId"]) for post in idlist["data"]["postList"]]
                             for i, (postid, userid) in enumerate(post_user_pairs[:3]):  # 浏览3篇帖子
                                 post_detail = self.get_post_detail(postid)
                                 if isinstance(post_detail, str):  # 如果返回的是错误信息
                                     log_error(post_detail)
-                                    msg += post_detail + "\n\n"
+                                    msg += post_detail + "\n"
                                 time.sleep(1)
 
                     elif remark == "点赞5次":
                         idlist = self.get_bbs_forum()
                         if isinstance(idlist, str):  # 如果返回的是错误信息
                             log_error(idlist)
-                            msg += idlist + "\n\n"
+                            msg += idlist + "\n"
                         elif idlist:
                             post_user_pairs = [(post["postId"], post["userId"]) for post in idlist["data"]["postList"]]
                             for i, (postid, userid) in enumerate(post_user_pairs[:5]):  # 点赞5次
@@ -283,12 +294,12 @@ class KuroBBS:
                                 if like_result is None:
                                     like_result = "点赞失败"
                                 log_info(f"第{i+1}次点赞结果: {like_result}")
-                                msg += f"第{i+1}次点赞结果: {like_result}\n\n"
+                                msg += f"第{i+1}次点赞结果: {like_result}\n"
                                 time.sleep(1)
 
                     elif remark == "分享1次帖子":
                         share_result = self.share_posts()
-                        msg += f"分享结果: {share_result}\n\n"
+                        msg += f"分享结果: {share_result}\n"
 
                     time.sleep(1)
 
@@ -304,7 +315,7 @@ class KuroBBS:
             total_gold = self.get_total_gold()
             goldnum = total_gold["data"]["goldNum"]
             log_info(f"今日任务已完成，总计获取金币: {gain_gold};现在剩余：{goldnum}金币")
-            msg += f"今日任务已完成，总计获取金币: {gain_gold};现在剩余：{goldnum}金币\n\n"
+            msg += f"今日任务已完成，总计获取金币: {gain_gold};现在剩余：{goldnum}金币\n"
 
             log_info("库街区签到流程完成")
             return msg
