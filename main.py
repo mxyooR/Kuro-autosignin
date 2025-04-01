@@ -12,7 +12,7 @@ from log import setup_logger, log_info, log_error
 from tools import update_config_from_old_version
 import logging
 from game_check_in import GameCheckIn
-from bbs_sgin_in import KuroBBS
+from bbs_sign_in import KuroBBS
 import os
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
