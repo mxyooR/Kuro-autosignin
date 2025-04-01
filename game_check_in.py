@@ -63,13 +63,13 @@ class GameCheckIn:
             if response_data.get("code") != 200:
                 error_message = f"获取签到奖品失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}"
                 log_error(error_message)
-                return error_message
+                return "ERROR:"+error_message
             data = response_data["data"]
             if isinstance(data, list) and len(data) > 0:
                 first_goods_name = data[0]["goodsName"]
                 log_debug(f"成功获取签到奖品: {first_goods_name}")
                 return first_goods_name
-            error_message = "签到奖品数据格式不正确或数据为空"
+            error_message = "ERROR:签到奖品数据格式不正确或数据为空"
             log_error(error_message)
             return error_message
         except Exception as e:
@@ -120,15 +120,15 @@ class GameCheckIn:
                 return f"{game_name}今天已签到，签到奖品: {goods_names}"
             elif code == 1513:
                 log_error(f"{game_name}签到报错：用户信息异常")
-                return f"{game_name}签到报错：用户信息异常"
+                return f"ERROR:{game_name}签到报错：用户信息异常"
             elif code == 220:
                 log_error(f"{game_name}签到报错：登录已过期，请重新登录")
-                return f"{game_name}签到报错：登录已过期，请重新登录"
+                return f"ERROR:{game_name}签到报错：登录已过期，请重新登录"
             else:
                 error_message = f"{game_name}签到失败，响应代码: {code}, 消息: {response_data.get('msg')}"
                 log_error(error_message)
-                return error_message
+                return "ERROR:"+error_message
         except Exception as e:
             error_message = f"签到失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message

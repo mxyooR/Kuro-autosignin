@@ -74,7 +74,7 @@ class KuroBBS:
         except Exception as e:
             error_message = f"获取帖子列表失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def get_post_detail(self, postid):
         """
@@ -101,7 +101,7 @@ class KuroBBS:
         except Exception as e:
             error_message = f"获取帖子详情失败，帖子ID: {postid}, 错误: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def like_posts(self, postid, userid):
         """
@@ -139,7 +139,7 @@ class KuroBBS:
         except Exception as e:
             error_message = f"点赞帖子失败，帖子ID: {postid}, 错误: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def share_posts(self):
         """
@@ -165,7 +165,7 @@ class KuroBBS:
         except Exception as e:
             error_message = f"分享帖子失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def get_total_task(self):
         """
@@ -187,7 +187,7 @@ class KuroBBS:
         except Exception as e:
             error_message = f"获取任务列表失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def get_total_gold(self):
         """
@@ -208,7 +208,7 @@ class KuroBBS:
         except Exception as e:
             error_message = f"获取金币总数失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def bbssignin(self):
         """
@@ -230,11 +230,11 @@ class KuroBBS:
                 return "签到成功"
             else:
                 log_error(f"签到失败: {response.text}")
-                return "签到失败"
+                return "ERROR:签到失败"
         except Exception as e:
             error_message = f"签到失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message
 
     def sign_in(self):
         """
@@ -322,4 +322,4 @@ class KuroBBS:
         except Exception as e:
             error_message = f"库街区签到流程失败: {e}"
             log_error(error_message)
-            return error_message
+            return "ERROR:"+error_message

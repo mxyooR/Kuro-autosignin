@@ -9,6 +9,7 @@ import datetime
 import json
 import argparse
 from log import setup_logger, log_info, log_error
+from tools import update_config_from_old_version
 import logging
 from game_check_in import GameCheckIn
 from bbs_sgin_in import KuroBBS
@@ -48,7 +49,10 @@ def sign_in():
     distinct_id = data['distinct_id']
     users = data['users']
     checkpush = data['push']
-    server_message = ""
+    server_message = f"{now.strftime('%Y-%m-%d')} 开始签到\n"
+    server_message += "=====================================\n"
+    log_info(f"{now.strftime('%Y-%m-%d')} 开始签到")
+    log_info("=====================================")
     success_users = []  # 记录签到成功的用户
     error_users = []    # 记录签到过程中发生错误的用户
 
@@ -56,7 +60,7 @@ def sign_in():
         if user["is_enable"] != True:
             log_info(f"{user['name']} 已禁用，跳过签到")
             log_info("=====================================")
-            server_message += f"{now.strftime('%Y-%m-%d')} {user['name']} 已禁用，跳过签到\n"
+            server_message += f"{user['name']} 已禁用，跳过签到\n"
             continue
 
         name = user['name']
@@ -67,7 +71,7 @@ def sign_in():
         devcode = user['devCode']
 
         log_info(f"{name} 开始签到")
-        server_message += f"{now.strftime('%Y-%m-%d')} {name} 签到\n"
+        server_message += f" {name} 签到\n"
         try:
             # 实例化游戏签到类
             GameCheck = GameCheckIn(tokenraw)
@@ -82,13 +86,15 @@ def sign_in():
                     user_id=userId,
                     month=month
                 )
-                if "登录已过期" or "用户信息异常" in ww_msg:
+                if "登录已过期" in ww_msg or "用户信息异常" in ww_msg:
                     log_error(f"{name} 用户登录信息已失效，禁用该用户")
                     server_message += f"{name} 用户登录信息已失效，禁用该用户\n"
                     user["is_enable"] = False
                     update_user_status(user)  # 更新该用户状态
                     error_users.append(name)
                     continue
+                if "ERROR" in ww_msg:
+                    error_users.append(name)
                 server_message += f"{ww_msg}\n"
 
             # 战双签到
@@ -102,13 +108,15 @@ def sign_in():
                     user_id=userId,
                     month=month
                 )
-                if "登录已过期" or "用户信息异常" in ee_msg:
+                if "登录已过期" in ee_msg or "用户信息异常" in ee_msg:
                     log_error(f"{name} 用户登录信息已失效，禁用该用户")
                     server_message += f"{name} 用户登录信息已失效，禁用该用户\n"
                     user["is_enable"] = False
                     update_user_status(user)  # 更新该用户状态
                     error_users.append(name)
                     continue
+                if "ERROR" in ee_msg:
+                    error_users.append(name)
                 server_message += f"{ee_msg}\n"
 
             time.sleep(1)
@@ -116,19 +124,23 @@ def sign_in():
             # 库街区签到
             krbbs = KuroBBS(tokenraw, devcode, distinct_id)
             kuro_msg = krbbs.sign_in()
-            if "登录已过期" or "用户信息异常" in kuro_msg:
+            if "登录已过期" in kuro_msg or "用户信息异常" in kuro_msg:
                 log_error(f"{name} 用户登录信息已失效，禁用该用户")
                 server_message += f"{name} 用户登录信息已失效，禁用该用户\n"
                 user["is_enable"] = False
                 update_user_status(user)  # 更新该用户状态
                 error_users.append(name)
                 continue
+            if "ERROR" in kuro_msg:
+                error_users.append(name)
+
             server_message += kuro_msg
             server_message += f"{name} 签到结束\n"
             server_message += "=====================================\n"
             log_info(f"{name} 签到结束")
             log_info("=====================================")
-            success_users.append(name)  # 签到成功的用户
+            if name not in error_users:
+                success_users.append(name)
 
         except Exception as e:
             log_error(f"{name} 签到过程中发生错误: {e}")
@@ -159,5 +171,5 @@ if __name__ == "__main__":
         setup_logger(log_level=logging.ERROR)
     else:
         setup_logger(log_level=logging.INFO)
-
+    update_config_from_old_version(DATA_PATH)
     sign_in()
