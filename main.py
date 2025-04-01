@@ -61,6 +61,7 @@ def sign_in():
             log_info(f"{user['name']} 已禁用，跳过签到")
             log_info("=====================================")
             server_message += f"{user['name']} 已禁用，跳过签到\n"
+            server_message += "=====================================\n"
             continue
 
         name = user['name']
@@ -161,7 +162,7 @@ def sign_in():
 
 
 
-if __name__ == "__main__":
+def main():
     args = parse_arguments()
 
     # 根据命令行参数设置日志级别
@@ -173,3 +174,6 @@ if __name__ == "__main__":
         setup_logger(log_level=logging.INFO)
     update_config_from_old_version(DATA_PATH)
     sign_in()
+
+if __name__ == "__main__":
+    main()

@@ -31,7 +31,7 @@
 ## 青龙面板运行方法
 
 1. **拉取项目到本地**：将项目克隆到本地目录。
-2. **获取个人信息**：捕获库街区的包，获取并填写好 `data.json` 中的 `token`、`devcode`、`wwroleId`、`eeeroleId`、`userId` 和 `distinct_id`。
+2. **获取个人信息**：捕获库街区的包，获取并填写好 `data.json` 中的 `token`、`devcode`、`wwroleId`、`eeeroleId`、`userId` 、`is_enable`和 `distinct_id`。
 3. **创建订阅**：在青龙面板中创建新的订阅任务。
    - 名称：库街区签到
    - 类型：公开仓库
@@ -39,7 +39,7 @@
    - 定时类型：crontab
    - 定时规则：1 9 * * *
    - 白名单：main.py
-   - 依赖文件：log|game_check_in|bbs_sgin_in|push
+   - 依赖文件：log|game_check_in|bbs_sgin_in|push|tools
 
 4. **导入 `data.json`**：在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `data.json` 文件。
 5. **添加依赖**：在青龙面板的依赖管理里面安装requests依赖。
