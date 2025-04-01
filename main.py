@@ -11,11 +11,12 @@ import argparse
 from log import setup_logger, log_info, log_error
 import logging
 from game_check_in import ww_game_check_in, eee_game_check_in
-from bbs_sgin_in import KuroBBS_sign_in
+from bbs_sgin_in import KuroBBS
 import os
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = FILE_PATH + '/config/data.json'
+
 
 def parse_arguments():
     """解析命令行参数"""
@@ -50,8 +51,10 @@ def sign_in():
     server_message = ""
 
     for user in users:
-        if not user.get("is_enable", True):
+        if user["is_enable"] != True:
             log_info(f"{user['name']} 已禁用，跳过签到")
+            log_info("=====================================")
+            server_message += f"{now.strftime('%Y-%m-%d')} {user['name']} 已禁用，跳过签到\n\n"
             continue
 
         name = user['name']
@@ -69,7 +72,7 @@ def sign_in():
             ww_msg = ww_game_check_in(tokenraw, wwroleId, userId, month)
             if "登录已过期" in ww_msg:
                 log_error(f"{name} 鸣潮签到失败，禁用该用户")
-                push(f"{name} 库街区用户信息失效，请重新获取token，已禁用该用户")
+                server_message += f"{name} 库街区签到失败，禁用该用户\n\n"
                 user["is_enable"] = False
                 update_user_status(user)  # 更新该用户状态
                 continue
@@ -80,7 +83,7 @@ def sign_in():
             ee_msg = eee_game_check_in(tokenraw, eeeroleId, userId, month)
             if "登录已过期" in ee_msg:
                 log_error(f"{name} 战双签到失败，禁用该用户")
-                push(f"{name} 库街区用户信息失效，请重新获取token，已禁用该用户")
+                server_message += f"{name} 库街区签到失败，禁用该用户\n\n"
                 user["is_enable"] = False
                 update_user_status(user)  # 更新该用户状态
                 continue
@@ -89,10 +92,11 @@ def sign_in():
         time.sleep(1)
 
         # 库街区签到
-        kuro_msg = KuroBBS_sign_in(tokenraw, devcode, distinct_id)
+        krbbs = KuroBBS(tokenraw, devcode, distinct_id)
+        kuro_msg = krbbs.sign_in()
         if "登录已过期" in kuro_msg:
             log_error(f"{name} 库街区签到失败，禁用该用户")
-            push(f"{name} 库街区用户信息失效，请重新获取token，已禁用该用户")
+            server_message += f"{name} 库街区签到失败，禁用该用户\n\n"
             user["is_enable"] = False
             update_user_status(user)  # 更新该用户状态
             continue
