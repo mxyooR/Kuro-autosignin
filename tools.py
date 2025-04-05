@@ -38,6 +38,7 @@ def update_config_from_old_version(config_path):
 
     # 保存更新后的配置
     with open(config_path, 'w', encoding='utf-8-sig') as f:
-        json.dump(config, f, ensure_ascii=False, indent=4)
+        json_string = json.dumps(config, ensure_ascii=False, indent=4).replace('True', 'true')
+        f.write(json_string)
 
     log_info("配置文件已成功更新")

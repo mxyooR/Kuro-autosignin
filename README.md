@@ -20,7 +20,9 @@
   - 国内: <https://nodejs.cn/download/>
   - 官网: [Node.js — Download Node.js® (nodejs.org)](https://nodejs.org/en/download/package-manager)
 - Python 环境
-  - `pip install -r ./requirements.txt`
+
+  - `pip install -r ./requirements.txt`(若要使用短信发送来获取token)
+  - `pip install -r ./requirements_normal.txt`(不使用`sms_send.py` 来获取token)
 
 ## 短信登录工具说明
 
