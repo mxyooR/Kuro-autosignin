@@ -429,24 +429,26 @@ def wintoast(send_title, push_message):
         log_error(f"Windows Toast 推送失败: {e}")
 
 
-def push(push_message):
+def push(push_message, split=False):
     if not load_config():
         log_error("加载配置失败，推送终止")
         return 1
     log_info("正在执行推送......")
     func_names = cfg.get('setting', 'push_server').lower()
+    messages = push_message.split("=====================================") if split else [push_message]
     for func_name in func_names.split(","):
         func = globals().get(func_name)
         if not func:
             log_error("推送服务名称错误：请检查config/push.ini -> [setting] -> push_server")
             continue
         log_info(f"推送所用的服务为: {func_name}")
-        try:
-            func("库街区签到", push_message)
-        except Exception as r:
-            log_error(f"推送执行错误：{str(r)}")
-            return 1
-        log_info(f"{func_name} - 推送完毕......")
+        for message in messages:
+            try:
+                func("库街区签到", message.strip())
+            except Exception as r:
+                log_error(f"推送执行错误：{str(r)}")
+                return 1
+            log_info(f"{func_name} - 推送完毕......")
     return 0
 
 

@@ -1,5 +1,6 @@
 {
     "push":1,
+    "split": 1,
     "distinct_id": "抓包获取",
     "users": [
 

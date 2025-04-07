@@ -49,6 +49,7 @@ def sign_in():
     distinct_id = data['distinct_id']
     users = data['users']
     checkpush = data['push']
+    split = data['split']
     server_message = f"{now.strftime('%Y-%m-%d')} 开始签到\n"
     server_message += "=====================================\n"
     log_info(f"{now.strftime('%Y-%m-%d')} 开始签到")
@@ -158,7 +159,7 @@ def sign_in():
     # 推送签到结果
     if checkpush:
         from push import push
-        push(server_message)
+        push(server_message,split)
 
 
 

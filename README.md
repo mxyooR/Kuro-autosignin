@@ -10,7 +10,8 @@
 
 1. **替换个人信息**：请通过抓库街区的包替换`config/data.json`脚本中的 `token`、`devcode`、 `wwroleId`、`eeeroleId`、 `userId` 和 `distinct_id`。`wwroleId`、`eeeroleId`如只需要签到一个则另一个空着。
 2. **获取 Token**：使用 `sms_send.py` 来获取你的 `token`（此方法用于不想折腾安卓抓包并且客户端不能再次登录，库街区的 token 如果新设备登陆了会刷新）；或者直接抓包。
-3. **签到信息推送**：如需要开启请在`config/data.json`中设置`"push":1`,不开启为`0`,在 `/config/push.ini` 中填写信息，具体参照[配置文档](/config/README.md)，感谢https://github.com/Womsxd/MihoyoBBSTools 项目提供推送方式
+3. **签到信息推送**：如需要开启请在`config/data.json`中设置`"push":1`,不开启为`0`,在 `/config/push.ini` 中填写信息，具体参照[配置文档](/config/README.md)，感谢https://github.com/Womsxd/MihoyoBBSTools 项目提供推送方式.
+考虑到多用户可能消息过长，在`config/data.json`中设置`"split":1`为分段发送，不分段为`0`.
 4. **云函数支持**：入口为 `index.handler`。
 5. **serverid设置**：战双serverid如果不对请自行抓包更正。
 
