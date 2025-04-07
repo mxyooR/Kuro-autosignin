@@ -30,7 +30,8 @@ def update_config_from_old_version(config_path):
 
     with open(config_path, 'r', encoding='utf-8-sig') as f:
         config = json.load(f)
-
+    if "split" not in config:
+        config["split"] = 0  # 添加默认值
     # 检查并更新每个用户的配置
     for user in config.get("users", []):
         if "is_enable" not in user:
