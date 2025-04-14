@@ -41,12 +41,12 @@
    - 链接：<https://github.com/mxyooR/Kuro-autosignin.git>
    - 定时类型：crontab
    - 定时规则：1 9 * * *
-   - 白名单：main.py
+   - 白名单：ql_main.py
    - 依赖文件：log|game_check_in|bbs_sign_in|push|tools
 
 4. **导入 `data.json`**：在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `data.json` 文件。
 5. **添加依赖**：在青龙面板的依赖管理里面安装requests依赖。
-6. **推送选项**：青龙面板可以使用青龙自带的推送，不必用本脚本自带的推送，如要使用，请填写push.ini放入/config目录下。
+6. **推送选项**：青龙面板可以使用青龙自带的推送，不必用本脚本自带的推送，并且设置`data.json`中`push`为`1`,如要使用本脚本自带的推送，请把白名单替换成`main.py`，并且填写push.ini放入/config目录下。
 
 ## Docker 运行方法
 

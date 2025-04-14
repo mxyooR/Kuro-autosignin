@@ -156,12 +156,12 @@ def sign_in():
     log_info(summary_message)
     server_message += summary_message
 
-    # 推送签到结果
-    if checkpush:
-        from push import push
-        push(server_message,split)
+    return server_message,split, checkpush
 
 
+def send_push_notification(server_message,split):
+    from push import push
+    push(server_message,split)
 
 def main():
     args = parse_arguments()
@@ -174,7 +174,10 @@ def main():
     else:
         setup_logger(log_level=logging.INFO)
     update_config_from_old_version(DATA_PATH)
-    sign_in()
+    msg,split,checkpush=sign_in()
+    if checkpush:
+        send_push_notification(msg,split)
+
 
 if __name__ == "__main__":
     main()
