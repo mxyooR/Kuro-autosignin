@@ -7,7 +7,7 @@ def ql_push(message,split):
             if msg.strip():
                 notify.send(msg)
     else:
-        notify.send(message)
+        notify.send("库街区签到",message)
 
 if __name__ == "__main__":
     msg,split,checkpush=sign_in()
