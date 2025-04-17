@@ -107,11 +107,9 @@
    ```bash
    docker-compose stop
    docker-compose pull && docker-compose up -d
-   ```
 
-
-
-
-
+### 未来改进
+   - **配置文件优化**：将配置文件格式从 JSON 改为更易读的 YAML 格式。
+   - **推送配置优化**：优化推送信息，可选推送内容。
 
 
