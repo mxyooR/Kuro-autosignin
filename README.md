@@ -8,21 +8,7 @@
 
 ## 获取 Token
 
-在使用脚本前，需要获取你的登录 Token。以下提供两种方法：
-
-### 方法一：使用 `sms_send.py` 获取 Token
-1. 运行 `sms_send.py`。
-2. 输入你的手机号，获取验证码。
-3. 输入验证码，脚本会返回你的 `token` 和其他相关信息。
-
-### 方法二：使用 `login.py` 获取 Token
-1. 打开 [库街区登录页面](https://www.kurobbs.com/mc/home/)。
-2. 获取你的登录验证码，但**不要点击登录**。
-3. 运行 `login.py`，输入手机号和验证码。
-4. 脚本会返回你的 `token` 和其他相关信息。
-
-### 方法三：自行抓包
-
+为了更好地管理文件和依赖，获取Token功能已迁移至 [Kuro_login](https://github.com/mxyooR/Kuro_login)。请访问该项目以获取登录相关的详细说明和支持。
 
 ## 使用说明
 
@@ -31,24 +17,9 @@
 考虑到多用户可能消息过长，在`config/data.json`中设置`"split":1`为分段发送，不分段为`0`。
 3. **云函数支持**：入口为 `index.handler`。
 4. **serverid设置**：战双serverid如果不对请自行抓包更正。
+5. **环境依赖**：安装python3以上环境，运行`pip install -r ./requirements.txt`
 
----
 
-## 环境依赖
-
-- NodeJS
-  - 国内: <https://nodejs.cn/download/>
-  - 官网: [Node.js — Download Node.js® (nodejs.org)](https://nodejs.org/en/download/package-manager)
-- Python 环境
-
-  - `pip install -r ./requirements.txt`(若要使用短信发送来获取token)
-  - `pip install -r ./requirements_normal.txt`(不使用`sms_send.py` 来获取token)
-
-## 短信登录工具说明
-
-现已将极验验证的接口转为图标点选，并重新编写参数加密部分。目前图片识别使用网上的模型以及`ddddocr`，成功率有点感人但凑活着用吧。若不通过可多尝试几次
-
-**图片处理部分代码来自**[Bump-mann/simple_ocr: 一个简单的识别验证码的代码](https://github.com/Bump-mann/simple_ocr)
 
 ## 青龙面板运行方法
 
@@ -74,7 +45,7 @@
 2. **工作目录**：将工作目录设置为 `/app`。
 3. **配置文件**：在本地设置好`config`配置文件，替换个人信息。
 4. **复制文件**：将项目文件复制到容器中。
-5. **安装依赖**：通过 `requirements_normal.txt` 安装自动签到的项目依赖。
+5. **安装依赖**：通过 `requirements.txt` 安装自动签到的项目依赖。
 6. **运行程序**：默认运行 `main.py`，你可以根据需要修改。
 
 ---

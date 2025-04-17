@@ -1,5 +1,0 @@
-requests
-httpx
-schedule
-loguru
-pytz
