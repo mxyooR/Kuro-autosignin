@@ -21,3 +21,4 @@ __pycache__/
 # tools
 static/pictures/
 static/tmp/
+*.yaml
