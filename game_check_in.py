@@ -92,7 +92,7 @@ class GameCheckIn:
         """
         try:
             url = "https://api.kurobbs.com/encourage/signIn/v2"
-            if game_id == 2:
+            if game_id == '2':
                 game_name = "战双"
                 server_id = "1000"
             else:
@@ -105,7 +105,7 @@ class GameCheckIn:
                 "userId": user_id,
                 "reqMonth": month
             }
-            
+            log_info(f" {game_name}开始签到")
             response = requests.post(url, headers=self.headers, data=data)
             response.raise_for_status()
             log_debug(f"游戏签到响应: {response.text}")

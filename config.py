@@ -7,7 +7,7 @@ from tools import get_user_info_by_token, get_game_user_id
 class ConfigManager:
     def __init__(self, config_dir):
         self.config_dir = config_dir
-        
+
 
 
     def load_user_config(self, user_name):
@@ -76,7 +76,6 @@ class ConfigManager:
             # 更新 game_info 部分
             if 'game_info' not in config_data:
                 config_data['game_info'] = {}
-            config_data['game_info']['token'] = token
             config_data['game_info']['devcode'] = devcode
             config_data['game_info']['distinct_id'] = distinct_id
 

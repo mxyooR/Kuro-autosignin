@@ -1,6 +1,5 @@
 # 控制本 config 文件是否启用
 enable: true
-name: ""
 # token 必填
 token: ""
 #是否完整，不完整默认系统自动补全

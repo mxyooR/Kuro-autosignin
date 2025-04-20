@@ -6,6 +6,7 @@ from config import ConfigManager
 from game_check_in import GameCheckIn
 from bbs_sign_in import KuroBBS
 import datetime
+import time
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.path.join(FILE_PATH, 'config')
@@ -24,6 +25,8 @@ class SignInManager(ConfigManager):
         """
         msg = ""
         user_config = self.load_user_config(user_name)
+        msg+= f"{user_name} 签到开始\n"
+        log_info(f"{user_name} 签到开始")
         if not user_config:
             msg = f"{user_name} 配置加载失败，跳过签到\n"
             log_error(f"{user_name} 配置加载失败，跳过签到")
@@ -43,6 +46,7 @@ class SignInManager(ConfigManager):
         if not user_config.get("completed", False):
             log_info(f"{user_name} 配置文件不完整，开始执行填充流程")
             self.fill_raw_config(user_name, token)
+            user_config = self.load_user_config(user_name)
 
         msg = f"{user_name} 签到开始\n"
         try:
@@ -82,10 +86,25 @@ class SignInManager(ConfigManager):
         messages = []
         success_users = []
         error_users = []
+        messages.append(datetime.datetime.now().strftime("%Y-%m-%d") + " 开始签到任务\n")
         for file in os.listdir(self.config_dir):
+            time.sleep(1)  # 避免请求过快
             if file.endswith(".yaml"):
                 user_name = os.path.splitext(file)[0]
-                messages.append(self.sign_in_user(user_name))
+                msg = self.sign_in_user(user_name)
+                messages.append(msg)
+                if "ERROR" in msg:
+                    error_users.append(user_name)
+                else:
+                    success_users.append(user_name)
+
+        # 总结签到结果
+        summary_message = datetime.datetime.now().strftime("%Y-%m-%d")+"签到结果总结：\n"
+        summary_message += f"签到成功的用户: {', '.join(success_users) if success_users else '无'}\n"
+        summary_message += f"签到失败的用户: {', '.join(error_users) if error_users else '无'}\n"
+        log_info(summary_message)
+        messages.append(summary_message)
+
         return messages
 
 def parse_arguments():
