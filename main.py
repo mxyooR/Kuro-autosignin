@@ -25,23 +25,23 @@ class SignInManager(ConfigManager):
         """
         msg = ""
         user_config = self.load_user_config(user_name)
-        msg+= f"{user_name} 签到开始\n"
+        msg += f"{user_name} 签到开始\n"
         log_info(f"{user_name} 签到开始")
         if not user_config:
             msg = f"{user_name} 配置加载失败，跳过签到\n"
             log_error(f"{user_name} 配置加载失败，跳过签到")
-            return f"{user_name} 配置加载失败，跳过签到"
+            return msg
 
         if not user_config.get("enable", True):
-            msg+= f"{user_name} 已禁用，跳过签到\n"
+            msg += f"{user_name} 已禁用，跳过签到\n"
             log_info(f"{user_name} 已禁用，跳过签到")
-            return f"{user_name} 已禁用，跳过签到"
+            return msg
 
         token = user_config.get("token")
         if not token:
             msg += f"{user_name} 的 token 为空，跳过签到\n"
             log_error(f"{user_name} 的 token 为空，跳过签到")
-            return f"{user_name} 的 token 为空，跳过签到"
+            return msg
 
         if not user_config.get("completed", False):
             log_info(f"{user_name} 配置文件不完整，开始执行填充流程")
@@ -66,6 +66,12 @@ class SignInManager(ConfigManager):
         except Exception as e:
             log_error(f"{user_name} 签到失败: {e}")
             msg += f"{user_name} 签到失败: {e}\n"
+        
+        # 如果返回信息中包含用户信息异常，则禁用该用户
+        if "用户信息异常" in msg:
+            log_error(f"{user_name} 返回‘用户信息异常’，系统将自动禁用该用户")
+            self.disable_user(user_name)
+        
         return msg
 
     def sign_in_game(self, game_check, game_id, role_id, user_id):
@@ -86,20 +92,28 @@ class SignInManager(ConfigManager):
         messages = []
         success_users = []
         error_users = []
+        log_info(datetime.datetime.now().strftime("%Y-%m-%d") + " 开始签到")
         messages.append(datetime.datetime.now().strftime("%Y-%m-%d") + " 开始签到任务\n")
+
         for file in os.listdir(self.config_dir):
-            time.sleep(1)  # 避免请求过快
             if file.endswith(".yaml"):
+                time.sleep(1)  # 避免请求过快
                 user_name = os.path.splitext(file)[0]
                 msg = self.sign_in_user(user_name)
                 messages.append(msg)
+
                 if "ERROR" in msg:
                     error_users.append(user_name)
                 else:
                     success_users.append(user_name)
 
+                # 如果消息中包含“用户信息异常”，禁用该用户
+                if "用户信息异常" in msg:
+                    log_error(f"{user_name} 返回‘用户信息异常’，系统将自动禁用该用户")
+                    self.disable_user(user_name)
+
         # 总结签到结果
-        summary_message = datetime.datetime.now().strftime("%Y-%m-%d")+"签到结果总结：\n"
+        summary_message = datetime.datetime.now().strftime("%Y-%m-%d") + " 签到结果总结：\n"
         summary_message += f"签到成功的用户: {', '.join(success_users) if success_users else '无'}\n"
         summary_message += f"签到失败的用户: {', '.join(error_users) if error_users else '无'}\n"
         log_info(summary_message)
@@ -156,12 +170,12 @@ def main():
         log_info("推送服务已启用")
         from push import push
         if push_settings["push_level"] == 1:
-            push(messages[-1], push_settings["push_server"])
+            push(messages[-1])
         elif push_settings["push_level"] == 2:
-            push("\n".join(messages), push_settings["push_server"])
+            push("\n".join(messages))
         elif push_settings["push_level"] == 3:
             for msg in messages:
-                push(msg, push_settings["push_server"])
+                push(msg)
         else:
             log_error("未知的推送服务级别")
     else:

@@ -8,35 +8,92 @@
 
 ## 获取 Token
 
-为了更好地管理文件和依赖，获取Token功能已迁移至 [Kuro_login](https://github.com/mxyooR/Kuro_login)。请访问该项目以获取登录相关的详细说明和支持。
+为了更好地管理文件和依赖，获取 Token 功能已迁移至 [Kuro_login](https://github.com/mxyooR/Kuro_login)。请访问该项目以获取登录相关的详细说明和支持。
 
 ## 使用说明
 
-1. **替换个人信息**：请通过抓库街区的包替换`config/data.json`脚本中的 `token`、`devcode`、 `wwroleId`、`eeeroleId`、 `userId` 和 `distinct_id`。`wwroleId`、`eeeroleId`如只需要签到一个则另一个空着。
-2. **签到信息推送**：如需要开启请在`config/data.json`中设置`"push":1`,不开启为`0`,在 `/config/push.ini` 中填写信息，具体参照[配置文档](/config/README.md)，感谢https://github.com/Womsxd/MihoyoBBSTools 项目提供推送方式.
-考虑到多用户可能消息过长，在`config/data.json`中设置`"split":1`为分段发送，不分段为`0`。
-3. **云函数支持**：入口为 `index.handler`。
-4. **serverid设置**：战双serverid如果不对请自行抓包更正。
-5. **环境依赖**：安装python3以上环境，运行`pip install -r ./requirements.txt`
+1. **配置文件管理**  
+   配置文件采用 YAML 格式存放于 `config` 目录中。每个用户对应一个 YAML 文件，文件名即用户的标识（不含扩展名）,如果需要多用户,复制`name.yaml.example`填写信息改成`name.yaml`放于 `config` 目录中。  
+   - 配置文件包括用户基本信息、游戏信息（如 token、devcode、distinct_id、wwroleId、eeeroleId）以及用户状态（enable）。
+   - 如果配置中未完整填写，系统会自动调用填充流程补全缺失信息。
+
+   示例配置文件 `name.yaml.example`：
+   ```yaml
+   # 控制本 config 文件是否启用
+   enable: true
+   # token 必填
+   token: ""
+   # 是否完整，不完整默认系统自动补全
+   completed: false
+
+   # 游戏信息
+   game_info:
+     # distinct_id 和 devCode 可选，系统会随机生成
+     distinct_id: ""
+     devcode: ""
+     # wwroleId：鸣潮 ID（可选，默认系统获取）
+     wwroleId: 
+     # eeeroleId：站双 ID（可选，默认系统获取）
+     eeeroleId: 
+
+   # 用户信息
+   user_info:
+     # 库街区 bbs ID（可选，默认系统获取）
+     userId: ""
+   ```
+
+2. **签到流程**  
+   主程序通过类 `SignInManager` 完成签到工作。  
+   - 对于每个用户，系统先读取其 YAML 配置文件，检查是否启用和配置完整性。  
+   - 执行游戏签到（鸣潮、战双）以及库街区签到，并根据结果记录日志。  
+   - 如果签到返回信息中包含“用户信息异常”，系统会自动调用禁用操作，将该用户状态置为禁用。
+
+3. **命令行参数**  
+   运行时可添加 `--debug` 或 `--error` 参数以调整日志级别。
+
+4. **签到信息推送**：如需要开启请在`config/push.ini`中设置`"enable":true`, 并且填写信息，填写`push_level`,推送详细程度：1=只推送总结，2=推送所有人的详细信息（一条），3=推送所有人的详细信息（多条）。具体参照[配置文档](/config/README.md)，感谢https://github.com/Womsxd/MihoyoBBSTools 项目提供推送方式.
+
+5. **云函数支持**：入口为 `index.handler`。
+
+6. **serverid设置**：战双serverid如果不对请自行抓包更正。
 
 
+## 环境依赖
+
+- Python 3.9 以上  
+- 使用 `pip install -r requirements.txt` 安装依赖
+
+## 运行方式
+
+### 本地运行
 
 ## 青龙面板运行方法
 
-1. **拉取项目到本地**：将项目克隆到本地目录。
-2. **获取个人信息**：捕获库街区的包，获取并填写好 `data.json` 中的 `token`、`devcode`、`wwroleId`、`eeeroleId`、`userId` 、`is_enable`和 `distinct_id`。
-3. **创建订阅**：在青龙面板中创建新的订阅任务。
+1. **拉取项目到本地**  
+   将项目克隆到本地目录。
+
+2. **获取个人信息**  
+   捕获库街区的包，按照本地部署的方式获取你需要的个人信息，并填写到 `config` 目录下的 `name.yaml` 文件中（每个用户一个 YAML 文件，文件名为用户标识，不含扩展名）。
+
+3. **创建订阅**  
+   在青龙面板中创建新的订阅任务：
    - 名称：库街区签到
    - 类型：公开仓库
    - 链接：<https://github.com/mxyooR/Kuro-autosignin.git>
    - 定时类型：crontab
    - 定时规则：1 9 * * *
    - 白名单：ql_main.py
-   - 依赖文件：log|game_check_in|bbs_sign_in|push|tools
+   - 依赖文件：log|game_check_in|bbs_sign_in|push|tools|config
 
-4. **导入 `data.json`**：在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `data.json` 文件。
-5. **添加依赖**：在青龙面板的依赖管理里面安装requests依赖。
-6. **推送选项**：青龙面板可以使用青龙自带的推送，不必用本脚本自带的推送，并且设置`data.json`中`push`为`1`,如要使用本脚本自带的推送，请把白名单替换成`main.py`，并且填写push.ini放入/config目录下。
+4. **导入配置文件**  
+   在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `name.yaml` 文件。
+
+5. **添加依赖**  
+   在青龙面板的依赖管理中安装所需的 Python 第三方库（例如 requests）。
+
+6. **推送选项**  
+   推送设置请在 `config/push.ini` 中配置，确认其中推送开关（enable）以及推送等级（push_level）已正确设置。  
+   - 如果使用本项目内置的推送，请确保白名单修改成 `main.py`，且将 `push.ini` 文件放置于 `config` 目录下。
 
 ## Docker 运行方法
 
@@ -108,8 +165,6 @@
    docker-compose stop
    docker-compose pull && docker-compose up -d
 
-### 未来改进
-   - **配置文件优化**：将配置文件格式从 JSON 改为更易读的 YAML 格式。
-   - **推送配置优化**：优化推送信息，可选推送内容。
+
 
 

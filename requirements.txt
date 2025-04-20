@@ -3,3 +3,4 @@ httpx
 schedule
 loguru
 pytz
+pyyaml

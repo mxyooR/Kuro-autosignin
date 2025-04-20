@@ -1,6 +1,11 @@
 #参考https://github.com/Womsxd/MihoyoBBSTools
 
+
 [setting]
+# 是否开启推送
+enable=true
+#推送详细程度：1=只推送总结，2=推送所有人的详细信息（一条），3=推送所有人的详细信息（多条）
+push_level=1
 # 共有 cqhttp ftqq(sever酱) pushplus telegram wecom dingrobot feishubot bark pushdeer gotify smtp(邮件推送) webhook qmsg(qq消息推送) WinToast(Win11通知)
 push_server=pushplus
 # server酱 pushplus dingrobot 的推送token
