@@ -141,53 +141,7 @@ def get_game_user_id(token,gameid,devcode,distinct_id):
         log_error(f"请求失败: {e}")
         return {"error": str(e)}
 
-def fill_raw_config(config_path, token, devcode=str(uuid.uuid4()), distinct_id=str(uuid.uuid4())):
-    """
-    填充原始 YAML 格式的配置文件
-    更新 game_info 中的 token, devCode 以及 distinct_id
-    :param config_path: YAML 配置文件路径
-    :param token: 用户 token
-    :param devcode: 设备代码
-    :param distinct_id: 唯一标识符
-    """
-    if not os.path.exists(config_path):
-        log_error(f"配置文件不存在: {config_path}")
-        return
 
-    try:
-        with open(config_path, 'r', encoding='utf-8-sig') as f:
-            config_data = yaml.safe_load(f)
-        
-        if not config_data:
-            config_data = {}
-
-        # 更新 game_info 部分
-        if 'game_info' not in config_data:
-            config_data['game_info'] = {}
-
-        config_data['user_info']['userId'] = get_user_info_by_token(token, devcode, distinct_id)
-        
-        #如果用户没有给devcode和distinct_id，使用随机
-        config_data['game_info']['devcode'] = devcode
-        config_data['game_info']['distinct_id'] = distinct_id
-
-        #更新gameid
-        ww_role_id = get_game_user_id(token, 3, devcode, distinct_id)
-        eee_role_id = get_game_user_id(token, 2, devcode, distinct_id)
-
-        config_data['game_info']["wwroleId"] = int(ww_role_id) if ww_role_id else None
-        config_data['game_info']["eeeroleId"] = int(eee_role_id) if eee_role_id else None
-
-
-        with open(config_path, 'w', encoding='utf-8') as f:
-            yaml.safe_dump(config_data, f, allow_unicode=True, default_flow_style=False)
-
-        log_info("YAML 配置文件已成功填充")
-    except Exception as e:
-        log_error(f"填充 YAML 配置文件失败: {e}")
 
 if __name__ == "__main__":
-
-    get_user_info_by_token(token, devcode, distinct_id)
-    # gameid = 2
-    role_ids = get_game_user_id(token, 2, devcode, distinct_id)
+    pass

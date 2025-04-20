@@ -77,11 +77,10 @@ class GameCheckIn:
             log_error(error_message)
             return error_message
 
-    def sign_in(self, game_id, server_id, role_id, user_id, month):
+    def sign_in(self, game_id,  role_id, user_id, month):
         """
         执行游戏签到
         :param game_id: 游戏 ID
-        :param server_id: 服务器 ID
         :param role_id: 角色 ID
         :param user_id: 用户 ID
         :param month: 当前月份
@@ -93,6 +92,12 @@ class GameCheckIn:
         """
         try:
             url = "https://api.kurobbs.com/encourage/signIn/v2"
+            if game_id == 2:
+                game_name = "战双"
+                server_id = "1000"
+            else:
+                game_name = "鸣潮"
+                server_id = "76402e5b20be2c39f095a152090afddc"
             data = {
                 "gameId": game_id,
                 "serverId": server_id,
@@ -100,10 +105,7 @@ class GameCheckIn:
                 "userId": user_id,
                 "reqMonth": month
             }
-            if game_id == 2:
-                game_name = "战双"
-            else:
-                game_name = "鸣潮"
+            
             response = requests.post(url, headers=self.headers, data=data)
             response.raise_for_status()
             log_debug(f"游戏签到响应: {response.text}")

@@ -3,6 +3,8 @@ enable: true
 name: ""
 # token 必填
 token: ""
+#是否完整，不完整默认系统自动补全
+completed: false
 
 # 游戏信息
 game_info:
