@@ -33,7 +33,7 @@
      devcode: ""
      # wwroleId：鸣潮 ID（可选，默认系统获取）
      wwroleId: 
-     # eeeroleId：站双 ID（可选，默认系统获取）
+     # eeeroleId：战双 ID（可选，默认系统获取）
      eeeroleId: 
 
    # 用户信息
