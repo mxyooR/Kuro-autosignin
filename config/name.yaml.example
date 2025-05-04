@@ -4,6 +4,8 @@ enable: true
 token: ""
 #是否完整，不完整默认系统自动补全
 completed: false
+# 是否自动补签
+auto_reple_sign: true
 
 # 游戏信息
 game_info:

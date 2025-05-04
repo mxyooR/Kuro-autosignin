@@ -55,7 +55,7 @@ class SignInManager(ConfigManager):
             for game_id, role_id in [("3", user_config.get("game_info", {}).get("wwroleId")),
                                      ("2", user_config.get("game_info", {}).get("eeeroleId"))]:
                 if role_id:
-                    msg += self.sign_in_game(game_check, game_id, role_id, user_config.get("user_info", {}).get("userId"))
+                    msg += self.sign_in_game(game_check, game_id, role_id, user_config.get("user_info", {}).get("userId"), user_config.get("auto_reple_sign", False))
 
             # 库街区签到
             bbs = KuroBBS(token, user_config.get("game_info", {}).get("devcode"), user_config.get("game_info", {}).get("distinct_id"))
@@ -74,12 +74,12 @@ class SignInManager(ConfigManager):
         
         return msg
 
-    def sign_in_game(self, game_check, game_id, role_id, user_id):
+    def sign_in_game(self, game_check, game_id, role_id, user_id, auto_reple_sign):
         """
         执行游戏签到
         """
         try:
-            msg = game_check.sign_in(game_id, role_id, user_id,datetime.datetime.now().strftime("%m"))
+            msg = game_check.sign_in(game_id, role_id, user_id, datetime.datetime.now().strftime("%m"), auto_reple_sign)
             return msg + "\n"
         except Exception as e:
             log_error(f"游戏签到失败: {e}")
