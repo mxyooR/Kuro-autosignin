@@ -25,7 +25,9 @@
    token: ""
    # 是否完整，不完整默认系统自动补全
    completed: false
-
+   # 是否自动补签
+   auto_reple_sign: true
+   
    # 游戏信息
    game_info:
      # distinct_id 和 devCode 可选，系统会随机生成
@@ -67,7 +69,38 @@
 
 ### 本地运行
 
-## 青龙面板运行方法
+1. **克隆项目**  
+   将项目克隆到本地目录：
+   ```bash
+   git clone https://github.com/mxyooR/Kuro-autosignin.git
+   cd Kuro-autosignin
+   ```
+
+2. **安装依赖**  
+   使用 pip 安装所需依赖：
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **配置文件**  
+   在 `config` 目录下创建或修改 YAML 配置文件（如 `name.yaml`），填写必要的用户信息。
+
+4. **运行程序**  
+   执行以下命令运行主程序：
+   ```bash
+   python main.py
+   ```
+
+5. **调试模式**（可选）  
+   如果需要调试日志信息，可以添加 `--debug` 参数：
+   ```bash
+   python main.py --debug
+   ```
+
+6. **查看日志**  
+   程序运行后，日志文件会保存在 `logs` 目录下，可通过日志文件查看运行结果。
+
+### 青龙面板运行方法
 
 1. **拉取项目到本地**  
    将项目克隆到本地目录。
