@@ -7,6 +7,7 @@ def handler(event: dict, context: dict):
         # 执行签到任务
         manager = SignInManager(CONFIG_DIR)
         messages = manager.run()
+        #print("签到结果:", messages)
         
         # 根据 push 配置发送推送通知
         push_settings = load_push_config()
@@ -24,10 +25,20 @@ def handler(event: dict, context: dict):
             else:
                 final_message = "\n".join(messages)
             if final_message:
-                push.push("库街区签到", final_message)
+                print(final_message)
+                push.push(final_message)
         else:
             print("推送服务未启用")
     except Exception as e:
         print(f"Error during sign-in: {e}")
         return {"status": 500, "message": str(e)}
     return {"status": 200, "message": "签到任务完成"}
+
+"""
+if __name__ == "__main__":
+    #测试代码
+    event = {}
+    context = {}
+    result = handler(event, context)
+    print(result)
+"""

@@ -429,7 +429,7 @@ def wintoast(send_title, push_message):
         log_error(f"Windows Toast 推送失败: {e}")
 
 
-def push(push_message, split=False):
+def push(push_message):
     if not load_config():
         log_error("加载配置失败，推送终止")
         return 1
