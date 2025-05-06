@@ -116,7 +116,7 @@
    - 定时类型：crontab
    - 定时规则：1 9 * * *
    - 白名单：ql_main.py
-   - 依赖文件：log|game_check_in|bbs_sign_in|push|tools|config
+   - 依赖文件：log|game_check_in|bbs_sign_in|push|tools|config|main
 
 4. **导入配置文件**  
    在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `name.yaml` 文件。
