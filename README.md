@@ -59,6 +59,78 @@
 
 6. **serverid设置**：战双serverid如果不对请自行抓包更正。
 
+### 青龙面板运行方法
+
+青龙面板是一个支持定时任务的面板工具，可以稳定运行库街区签到。以下是详细配置步骤：
+
+#### 一、拉取代码
+
+在青龙面板的"订阅管理"中添加：
+
+- 名称：库街区签到
+- 类型：公开仓库
+- 链接：https://github.com/mxyooR/Kuro-autosignin.git
+- 定时类型：crontab
+- 定时规则：1 7 * * *  (每天早上7:01执行)
+- 白名单：ql_main.py
+- 依赖文件：log|game_check_in|bbs_sign_in|push|tools|config|main
+
+或者使用命令行添加：
+
+```bash
+ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_check_in|bbs_sign_in|push|tools|config|main"
+```
+
+#### 二、环境变量配置
+
+在青龙面板的"环境变量"中添加以下变量：
+
+| 名称 | 值 | 说明 |
+| ---- | ---- | ---- |
+| KuroBBS_config_path | /ql/data/config/ | 配置文件存放路径 |
+| KuroBBS_log_level | INFO | 日志级别(INFO/DEBUG/ERROR) |
+| KuroBBS_push_project | 0/1 | 是否使用项目自带推送(1=是) |
+| KuroBBS_push_path | /ql/data/config/ | 推送配置文件路径(选填) |
+| KuroBBS_push_name | push | 推送配置文件名称(选填) |
+
+#### 三、添加配置文件
+
+1. 进入青龙容器：
+   ```bash
+   docker exec -it qinglong bash
+   ```
+
+2. 复制配置文件模板：
+   ```bash
+   cp /ql/data/repo/mxyooR_Kuro-autosignin/config/name.yaml.example /ql/data/config/name.yaml
+   ```
+
+3. 编辑配置文件，填入你的库街区token：
+   ```bash
+   vi /ql/data/config/name.yaml
+   ```
+
+4. 复制并配置推送文件：
+   ```bash
+   cp /ql/data/repo/mxyooR_Kuro-autosignin/config/push.ini.example /ql/data/config/push.ini
+   vi /ql/data/config/push.ini
+   ```
+
+#### 四、安装依赖
+
+在青龙面板的"依赖管理"->"Python"中添加：
+- requests
+- pyyaml
+- pytz
+- httpx
+
+#### 五、运行任务
+
+完成上述配置后，可以在"定时任务"中找到并运行"库街区签到"任务进行测试。
+
+#### 六、查看日志
+
+运行后可以在任务日志中查看执行结果，排查可能的问题。
 
 ## 环境依赖
 
@@ -100,33 +172,6 @@
 6. **查看日志**  
    程序运行后，日志文件会保存在 `logs` 目录下，可通过日志文件查看运行结果。
 
-### 青龙面板运行方法
-
-1. **拉取项目到本地**  
-   将项目克隆到本地目录。
-
-2. **获取个人信息**  
-   捕获库街区的包，按照本地部署的方式获取你需要的个人信息，并填写到 `config` 目录下的 `name.yaml` 文件中（每个用户一个 YAML 文件，文件名为用户标识，不含扩展名）。
-
-3. **创建订阅**  
-   在青龙面板中创建新的订阅任务：
-   - 名称：库街区签到
-   - 类型：公开仓库
-   - 链接：<https://github.com/mxyooR/Kuro-autosignin.git>
-   - 定时类型：crontab
-   - 定时规则：1 9 * * *
-   - 白名单：ql_main.py
-   - 依赖文件：log|game_check_in|bbs_sign_in|push|tools|config|main
-
-4. **导入配置文件**  
-   在青龙面板的脚本管理中，进入 `mxyooR_Kuro-autiosignin/config` 文件目录下，导入并替换修改好的 `name.yaml` 文件。
-
-5. **添加依赖**  
-   在青龙面板的依赖管理中安装所需的 Python 第三方库（例如 requests）。
-
-6. **推送选项**  
-   推送设置请在 `config/push.ini` 中配置，确认其中推送开关（enable）以及推送等级（push_level）已正确设置。  
-   - 如果使用本项目内置的推送，请确保白名单修改成 `main.py`，且将 `push.ini` 文件放置于 `config` 目录下。
 
 ## Docker 运行方法
 

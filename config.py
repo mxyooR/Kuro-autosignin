@@ -5,10 +5,28 @@ from log import log_info, log_error
 from tools import get_user_info_by_token, get_game_user_id
 
 class ConfigManager:
-    def __init__(self, config_dir):
-        self.config_dir = config_dir
-
-
+    def __init__(self, config_dir=None):
+        """
+        初始化配置管理器
+        :param config_dir: 配置目录，如果为None则尝试从环境变量获取
+        """
+        # 检查是否在青龙环境中运行
+        # 青龙不传config_dir参数进来
+        ql_config_path = os.environ.get('KuroBBS_config_path', '')
+        
+        # 如果提供了config_dir参数，优先使用
+        if config_dir:
+            self.config_dir = config_dir
+        elif ql_config_path:
+            self.config_dir = ql_config_path
+            log_info(f"使用环境变量配置路径: {self.config_dir}")
+        else:
+            # 默认路径是当前工作目录下的config文件夹
+            self.config_dir = os.path.join(os.getcwd(), "config")
+            log_info(f"使用默认配置路径: {self.config_dir}")
+        
+        # 确保配置目录存在
+        os.makedirs(self.config_dir, exist_ok=True)
 
     def load_user_config(self, user_name):
         """

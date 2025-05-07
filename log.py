@@ -2,14 +2,26 @@ import logging
 import os
 from datetime import datetime
 
-# 使用当前工作目录并设置日志目录和文件路径
-base_dir = os.getcwd()
-log_dir = os.path.join(base_dir, "log")
-os.makedirs(log_dir, exist_ok=True)
-log_path = os.path.join(log_dir, f"{datetime.now().strftime('%Y-%m-%d')}.log")
+# 获取日志路径
+def get_log_path():
+    """获取日志文件路径，优先使用青龙环境变量"""
+    # 检查是否在青龙环境中
+    ql_log_path = os.environ.get('QL_LOG_PATH')
+    if ql_log_path and os.path.exists(ql_log_path):
+        log_dir = ql_log_path
+    else:
+        # 默认使用当前工作目录下的log文件夹
+        base_dir = os.getcwd()
+        log_dir = os.path.join(base_dir, "log")
+    
+    # 确保日志目录存在
+    os.makedirs(log_dir, exist_ok=True)
+    return os.path.join(log_dir, f"kurobb_{datetime.now().strftime('%Y-%m-%d')}.log")
 
 def setup_logger(log_level=logging.INFO):
     """设置自定义日志记录器"""
+    log_path = get_log_path()
+    
     logger = logging.getLogger("custom_logger")
     logger.setLevel(log_level)  # 设置日志级别
 

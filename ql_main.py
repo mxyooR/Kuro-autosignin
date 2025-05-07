@@ -1,30 +1,71 @@
-from main import SignInManager, CONFIG_DIR, load_push_config
+import os
+import logging
+from log import setup_logger, log_info, log_error
+from main import SignInManager, load_push_config
 import notify
 
+
+
+def setup_ql_logger():
+    """设置青龙环境下的日志"""
+    # 设置日志级别
+    log_level = os.environ.get('KuroBBS_log_level', 'INFO')
+    if (log_level == 'DEBUG'):
+        setup_logger(log_level=logging.DEBUG)
+    elif (log_level == 'ERROR'):
+        setup_logger(log_level=logging.ERROR)
+    else:
+        setup_logger(log_level=logging.INFO)
+
 def ql_push(message):
-    notify.send("库街区签到", message)
+    """青龙面板推送消息"""
+    if use_project_push:
+        log_info("使用青龙自带推送")
+        try:
+            notify.send("库街区签到", message)
+            log_info("青龙推送发送成功")
+        except Exception as e:
+            log_error(f"青龙推送发送失败: {e}")
+    else:
+        log_info("使用默认推送方式，不使用青龙推送")
+        push(message)    
 
 if __name__ == "__main__":
-    manager = SignInManager(CONFIG_DIR)
-    messages = manager.run()  # messages 是一个列表
+    # 设置日志
+    setup_ql_logger()
+    log_info("库街区签到 - 青龙面板模式启动")
+
+    
+    # 创建签到管理器并执行
+
+    #让config去找默认path
+    manager = SignInManager()
+    messages = manager.run()
+    
+    # 检查推送方式
+
+    global use_project_push
+    use_project_push = os.environ.get('KuroBBS_push_project', '0') == '1'
+    
+    
+    # 读取推送配置
+    push_path = os.environ.get('KuroBBS_push_path', '/ql/data/config/')
+    push_name = os.environ.get('KuroBBS_push_name', 'push')
+    os.environ['PUSH_CONFIG_PATH'] = os.path.join(push_path, f"{push_name}.ini")
+    
+    # 加载推送配置并发送
     push_settings = load_push_config()
     if push_settings and push_settings["enable"]:
+        from push import push
         push_level = push_settings["push_level"]
-        final_message = ""
         if push_level == 1:
-            # 只推送总结信息（最后一条消息）
-            final_message = messages[-1]
+            ql_push(messages[-1])
         elif push_level == 2:
-            # 推送所有人的详细信息合并为一条消息
-            final_message = "\n".join(messages)
+            ql_push("\n".join(messages))
         elif push_level == 3:
-            # 分条推送，每条消息分别发送
             for msg in messages:
                 ql_push(msg)
         else:
-            # 默认合并所有消息
-            final_message = "\n".join(messages)
-        if final_message:
-            ql_push(final_message)
+            ql_push(messages[-1])
     else:
-        print("推送服务未启用")
+        log_info("项目推送未启用或配置不正确")

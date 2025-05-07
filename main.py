@@ -8,12 +8,13 @@ from bbs_sign_in import KuroBBS
 import datetime
 import time
 
+# 使用环境变量或默认路径
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
-CONFIG_DIR = os.path.join(FILE_PATH, 'config')
-PUSH_CONFIG_PATH = os.path.join(CONFIG_DIR, 'push.ini')
+CONFIG_DIR = os.environ.get('KuroBBS_config_path', os.path.join(FILE_PATH, 'config'))
+PUSH_CONFIG_PATH = os.environ.get('PUSH_CONFIG_PATH', os.path.join(CONFIG_DIR, 'push.ini'))
 
 class SignInManager(ConfigManager):
-    def __init__(self, config_dir):
+    def __init__(self, config_dir=None):
         super().__init__(config_dir)
 
 
@@ -130,24 +131,24 @@ def parse_arguments():
 
 
 def load_push_config():
-        """
-        加载推送配置
-        :return: 推送配置数据
-        """
-        if not os.path.exists(PUSH_CONFIG_PATH):
-            log_error(f"推送配置文件不存在: {PUSH_CONFIG_PATH}")
-            return None
-        import configparser
-        config = configparser.ConfigParser()
-        config.read(PUSH_CONFIG_PATH, encoding="utf-8-sig")
-        if 'setting' not in config:
-            log_error("推送配置文件中缺少 [setting] 部分")
-            return None
-        return {
-            "enable": config.getboolean('setting', 'enable', fallback=False),
-            "push_level": config.getint('setting', 'push_level', fallback=1),
-            "push_server": config.get('setting', 'push_server', fallback=''),
-        }
+    """
+    加载推送配置
+    :return: 推送配置数据
+    """
+    if not os.path.exists(PUSH_CONFIG_PATH):
+        log_error(f"推送配置文件不存在: {PUSH_CONFIG_PATH}")
+        return None
+    import configparser
+    config = configparser.ConfigParser()
+    config.read(PUSH_CONFIG_PATH, encoding="utf-8-sig")
+    if 'setting' not in config:
+        log_error("推送配置文件中缺少 [setting] 部分")
+        return None
+    return {
+        "enable": config.getboolean('setting', 'enable', fallback=False),
+        "push_level": config.getint('setting', 'push_level', fallback=1),
+        "push_server": config.get('setting', 'push_server', fallback=''),
+    }
 
 
 def main():
