@@ -25,7 +25,7 @@ def handler(event: dict, context: dict):
             else:
                 final_message = "\n".join(messages)
             if final_message:
-                print(final_message)
+                #print(final_message)
                 push.push(final_message)
         else:
             print("推送服务未启用")
@@ -34,11 +34,10 @@ def handler(event: dict, context: dict):
         return {"status": 500, "message": str(e)}
     return {"status": 200, "message": "签到任务完成"}
 
-"""
+
 if __name__ == "__main__":
     #测试代码
     event = {}
     context = {}
     result = handler(event, context)
     print(result)
-"""

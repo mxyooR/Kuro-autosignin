@@ -13,7 +13,7 @@
 ## 使用说明
 
 1. **配置文件管理**  
-   配置文件采用 YAML 格式存放于 `config` 目录中。每个用户对应一个 YAML 文件，文件名即用户的标识（不含扩展名）,如果需要多用户,复制`name.yaml.example`填写信息改成`name.yaml`放于 `config` 目录中。  
+   配置文件采用 YAML 格式存放于 `config` 目录中。每个用户对应一个 YAML 文件，文件名即用户的标识（不含扩展名）。  
    - 配置文件包括用户基本信息、游戏信息（如 token、devcode、distinct_id、wwroleId、eeeroleId）以及用户状态（enable）。
    - 如果配置中未完整填写，系统会自动调用填充流程补全缺失信息。
 
@@ -53,11 +53,146 @@
 3. **命令行参数**  
    运行时可添加 `--debug` 或 `--error` 参数以调整日志级别。
 
-4. **签到信息推送**：如需要开启请在`config/push.ini`中设置`"enable":true`, 并且填写信息，填写`push_level`,推送详细程度：1=只推送总结，2=推送所有人的详细信息（一条），3=推送所有人的详细信息（多条）。具体参照[配置文档](/config/README.md)，感谢https://github.com/Womsxd/MihoyoBBSTools 项目提供推送方式.
+4. **签到信息推送**  
+   如需要开启请在 `config/push.ini` 中设置 `"enable":true`，并填写信息，填写 `push_level`，推送详细程度：1=只推送总结，2=推送所有人的详细信息（一条），3=推送所有人的详细信息（多条）。具体参照[配置文档](/config/README.md)。
 
-5. **云函数支持**：入口为 `index.handler`。
 
-6. **serverid设置**：战双serverid如果不对请自行抓包更正。
+5. **serverid设置**：战双serverid如果不对请自行抓包更正。
+
+
+---
+
+## 云函数运行方法
+
+
+### 一、准备工作
+
+1. **拉取项目**
+   ```bash
+   git clone https://github.com/mxyooR/Kuro-autosignin.git
+   cd Kuro-autosignin
+   ```
+
+ 
+
+2. **安装依赖**
+   确保项目依赖已安装：
+   ```bash
+   pip3 install -r requirements.txt -t .
+   ```
+
+3. **配置文件**
+   在 `config` 目录下创建或修改 YAML 配置文件（如 `name.yaml`），填写必要的用户信息。
+
+4. **推送配置**
+   如果需要推送功能，请在 `config/push.ini` 中配置推送服务。
+
+---
+
+### 二、云函数入口
+
+云函数的入口 `index.handler` 
+
+
+
+### 三、部署到云函数平台
+
+#### 1. 腾讯云函数（SCF）
+
+1. **登录腾讯云函数控制台**  
+   访问 [腾讯云函数控制台](https://console.cloud.tencent.com/scf) 并登录。
+
+2. **创建函数**
+   - 函数类型：自定义创建。
+   - 运行环境：Python 3.10。
+   - 上传代码：将项目文件打包为 ZIP 文件上传。
+   - 函数入口：`index.handler`。
+
+
+3. **测试运行**
+   在函数管理页面，点击“测试”按钮，查看日志输出是否正常。
+
+---
+
+#### 2. 阿里云函数计算（FC）
+
+1. **登录阿里云函数计算控制台**  
+   访问 [阿里云函数计算控制台](https://fc.console.aliyun.com/) 并登录。
+
+2. **创建服务和函数**
+   - 服务名称：自定义。
+   - 函数名称：自定义。
+   - 运行环境：Python 3.10。
+   - 上传代码：将项目文件打包为 ZIP 文件上传。
+   - 函数入口：`index.handler`。
+
+
+3. **测试运行**
+   在函数管理页面，点击“测试”按钮，查看日志输出是否正常。
+
+---
+
+### 四、定时触发器
+
+为云函数添加定时触发器，实现每日自动签到。
+
+#### 腾讯云
+1. 在函数管理页面，点击“触发管理”。
+2. 添加触发器，选择“定时触发”。
+3. 设置触发周期（如每天早上7点）。
+
+#### 阿里云
+1. 在函数管理页面，点击“触发器”。
+2. 添加触发器，选择“定时触发”。
+3. 设置触发规则（如每天早上7点）。
+
+---
+
+### 五、查看日志
+
+运行后可以在云函数的日志服务中查看执行结果，排查可能的问题。
+
+---
+
+## 环境依赖
+
+- Python 3.9 以上  
+- 使用 `pip install -r requirements.txt` 安装依赖
+
+## 运行方式
+
+### 本地运行
+
+1. **克隆项目**  
+   将项目克隆到本地目录：
+   ```bash
+   git clone https://github.com/mxyooR/Kuro-autosignin.git
+   cd Kuro-autosignin
+   ```
+
+2. **安装依赖**  
+   使用 pip 安装所需依赖：
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **配置文件**  
+   在 `config` 目录下创建或修改 YAML 配置文件（如 `name.yaml`），填写必要的用户信息。
+
+4. **运行程序**  
+   执行以下命令运行主程序：
+   ```bash
+   python main.py
+   ```
+
+5. **调试模式**（可选）  
+   如果需要调试日志信息，可以添加 `--debug` 参数：
+   ```bash
+   python main.py --debug
+   ```
+
+6. **查看日志**  
+   程序运行后，日志文件会保存在 `logs` 目录下，可通过日志文件查看运行结果。
 
 ### 青龙面板运行方法
 
@@ -132,47 +267,6 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
 
 运行后可以在任务日志中查看执行结果，排查可能的问题。
 
-## 环境依赖
-
-- Python 3.9 以上  
-- 使用 `pip install -r requirements.txt` 安装依赖
-
-## 运行方式
-
-### 本地运行
-
-1. **克隆项目**  
-   将项目克隆到本地目录：
-   ```bash
-   git clone https://github.com/mxyooR/Kuro-autosignin.git
-   cd Kuro-autosignin
-   ```
-
-2. **安装依赖**  
-   使用 pip 安装所需依赖：
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **配置文件**  
-   在 `config` 目录下创建或修改 YAML 配置文件（如 `name.yaml`），填写必要的用户信息。
-
-4. **运行程序**  
-   执行以下命令运行主程序：
-   ```bash
-   python main.py
-   ```
-
-5. **调试模式**（可选）  
-   如果需要调试日志信息，可以添加 `--debug` 参数：
-   ```bash
-   python main.py --debug
-   ```
-
-6. **查看日志**  
-   程序运行后，日志文件会保存在 `logs` 目录下，可通过日志文件查看运行结果。
-
-
 ## Docker 运行方法
 
 ### 说明
@@ -242,6 +336,7 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
    ```bash
    docker-compose stop
    docker-compose pull && docker-compose up -d
+   ```
 
 
 
