@@ -37,16 +37,16 @@ class GameCheckIn:
 
     def get_sign_prize(self, game_id, server_id, role_id, user_id):
         """
-        获取签到奖品
+        获取签到奖励
         :param game_id: 游戏 ID
         :param server_id: 服务器 ID
         :param role_id: 角色 ID
         :param user_id: 用户 ID
-        :return: 奖品名称或错误信息
+        :return: 奖励名称或错误信息
         日志记录：
-            - debug: 签到奖品响应
-            - debug: 成功获取签到奖品
-            - error: 获取签到奖品失败
+            - debug: 签到奖励响应
+            - debug: 成功获取签到奖励
+            - error: 获取签到奖励失败
         """
         try:
             url = "https://api.kurobbs.com/encourage/signIn/queryRecordV2"
@@ -58,22 +58,22 @@ class GameCheckIn:
             }
             response = requests.post(url, headers=self.headers, data=data)
             response.raise_for_status()
-            log_debug(f"签到奖品响应: {response.text}")
+            log_debug(f"签到奖励响应: {response.text}")
             response_data = response.json()
             if response_data.get("code") != 200:
-                error_message = f"获取签到奖品失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}"
+                error_message = f"获取签到奖励失败，响应代码: {response_data.get('code')}, 消息: {response_data.get('msg')}"
                 log_error(error_message)
                 return "ERROR:"+error_message
             data = response_data["data"]
             if isinstance(data, list) and len(data) > 0:
                 first_goods_name = data[0]["goodsName"]
-                log_debug(f"成功获取签到奖品: {first_goods_name}")
+                log_debug(f"成功获取签到奖励: {first_goods_name}")
                 return first_goods_name
-            error_message = "ERROR:签到奖品数据格式不正确或数据为空"
+            error_message = "ERROR:签到奖励数据格式不正确或数据为空"
             log_error(error_message)
             return error_message
         except Exception as e:
-            error_message = f"ERROR:获取签到奖品失败: {e}"
+            error_message = f"ERROR:获取签到奖励失败: {e}"
             log_error(error_message)
             return error_message
 
@@ -144,8 +144,8 @@ class GameCheckIn:
             code = response_data.get("code")
             if code == 200:
                 goods_names = self.get_sign_prize(game_id, server_id, role_id, user_id)
-                log_info(f"{game_name}补签成功，签到奖品: {goods_names}")
-                return f"{game_name}补签成功，签到奖品: {goods_names}"
+                log_info(f"{game_name}补签成功，签到奖励: {goods_names}")
+                return f"{game_name}补签成功，签到奖励: {goods_names}"
             else:
                 error_message = f"{game_name}补签失败，响应代码: {code}, 消息: {response_data.get('msg')}"
                 log_error(error_message)
@@ -193,14 +193,14 @@ class GameCheckIn:
             result = ""
             
             if code == 200:
-                # 如果成功，调用 get_sign_prize 获取奖品列表
+                # 如果成功，调用 get_sign_prize 获取奖励列表
                 goods_names = self.get_sign_prize(game_id, server_id, role_id, user_id)
-                log_info(f"{game_name}签到成功，签到奖品: {goods_names}")
-                result = f"{game_name}签到成功，签到奖品: {goods_names}"
+                log_info(f"{game_name}签到成功，签到奖励: {goods_names}")
+                result = f"{game_name}签到成功，签到奖励: {goods_names}"
             elif code == 1511:
                 goods_names = self.get_sign_prize(game_id, server_id, role_id, user_id)
-                log_info(f"{game_name}今天已签到，签到奖品: {goods_names}")
-                result = f"{game_name}今天已签到，签到奖品: {goods_names}"
+                log_info(f"{game_name}今天已签到，签到奖励: {goods_names}")
+                result = f"{game_name}今天已签到，签到奖励: {goods_names}"
             elif code == 1513:
                 log_error(f"{game_name}签到报错：用户信息异常")
                 return f"ERROR:{game_name}签到报错：用户信息异常"
