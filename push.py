@@ -13,7 +13,9 @@ from log import log_info, log_debug, log_error
 
 from configparser import ConfigParser, NoOptionError
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
-INI_PATH = FILE_PATH + '/config/push.ini'
+
+CONFIG_DIR = os.environ.get('KuroBBS_config_path', os.path.join(FILE_PATH, 'config'))
+INI_PATH = os.environ.get('KuroBBS_push_path', os.path.join(CONFIG_DIR, 'push.ini'))
 
 cfg = ConfigParser()
 

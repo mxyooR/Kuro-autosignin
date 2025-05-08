@@ -144,6 +144,7 @@ def load_push_config():
     if 'setting' not in config:
         log_error("推送配置文件中缺少 [setting] 部分")
         return None
+    log_info("成功加载推送配置")
     return {
         "enable": config.getboolean('setting', 'enable', fallback=False),
         "push_level": config.getint('setting', 'push_level', fallback=1),
