@@ -43,7 +43,7 @@ class SignInManager(ConfigManager):
             msg += f"{user_name} 的 token 为空，跳过签到\n"
             log_error(f"{user_name} 的 token 为空，跳过签到")
             self.disable_user(user_name)
-            log_info(f"禁用{user_name} ")
+            log_info(f"禁用{user_name}")
             return msg
 
         if not user_config.get("completed", False):
@@ -105,7 +105,7 @@ class SignInManager(ConfigManager):
                 msg = self.sign_in_user(user_name)
                 messages.append(msg)
 
-                if "ERROR" in msg:
+                if "ERROR" in msg or "跳过签到" in msg:
                     error_users.append(user_name)
                 else:
                     success_users.append(user_name)
