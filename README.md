@@ -226,7 +226,7 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
 | KuroBBS_log_level | INFO | 日志级别(INFO/DEBUG/ERROR) |
 | KuroBBS_push_project | 0/1 | 是否使用项目自带推送(1=是) |
 | KuroBBS_push_path | /ql/data/config/ | 推送配置文件路径(选填) |
-| KuroBBS_push_name | push | 推送配置文件名称(选填) |
+
 
 #### 三、添加配置文件
 

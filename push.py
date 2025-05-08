@@ -15,8 +15,11 @@ from configparser import ConfigParser, NoOptionError
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 CONFIG_DIR = os.environ.get('KuroBBS_config_path', os.path.join(FILE_PATH, 'config'))
-INI_PATH = os.environ.get('KuroBBS_push_path', os.path.join(CONFIG_DIR, 'push.ini'))
-
+push_dir = os.environ.get('KuroBBS_push_path')
+if push_dir:
+    INI_PATH = os.path.join(push_dir, 'push.ini')
+else:
+    INI_PATH = os.path.join(CONFIG_DIR, 'push.ini')
 cfg = ConfigParser()
 
 

@@ -11,7 +11,14 @@ import time
 # 使用环境变量或默认路径
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.environ.get('KuroBBS_config_path', os.path.join(FILE_PATH, 'config'))
-PUSH_CONFIG_PATH = os.environ.get('KuroBBS_push_path', os.path.join(CONFIG_DIR, 'push.ini'))
+# 在 main.py 和 push.py 中修改
+push_dir = os.environ.get('KuroBBS_push_path')
+if push_dir:
+    # 如果设置了KuroBBS_push_path，将其视为目录
+    PUSH_CONFIG_PATH = os.path.join(push_dir, 'push.ini')
+else:
+    # 否则使用默认配置目录
+    PUSH_CONFIG_PATH = os.path.join(CONFIG_DIR, 'push.ini')
 
 class SignInManager(ConfigManager):
     def __init__(self, config_dir=None):

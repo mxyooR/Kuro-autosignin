@@ -43,12 +43,13 @@ if __name__ == "__main__":
     # 检查推送方式
 
     # | KuroBBS_push_project | 0/1 | 是否使用项目自带推送(1=是) |
+
     use_project_push = os.environ.get('KuroBBS_push_project', '0') == '1'
     if use_project_push:
-        log_info("使用默认推送方式，不使用青龙推送")
+        log_info("使用项目自带推送方式")
     else:
-        log_info("使用青龙自带推送")
-    
+        log_info("使用青龙自带推送方式")
+        
 
 
     
