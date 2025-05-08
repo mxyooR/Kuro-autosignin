@@ -90,7 +90,7 @@ def load_config():
         cfg.read(config_path, encoding='utf-8-sig')
         return True
     else:
-        log_error("配置文件不存在，请检查路径")
+        log_error(f"当前预期目录为：{config_path}，配置文件不存在，请检查路径")
         return False
 
 

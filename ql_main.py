@@ -20,15 +20,13 @@ def setup_ql_logger():
 def ql_push(message):
     """青龙面板推送消息"""
     if use_project_push:
-        log_info("使用青龙自带推送")
+        push(message)
+    else:
         try:
             notify.send("库街区签到", message)
             log_info("青龙推送发送成功")
         except Exception as e:
-            log_error(f"青龙推送发送失败: {e}")
-    else:
-        log_info("使用默认推送方式，不使用青龙推送")
-        push(message)    
+            log_error(f"青龙推送发送失败: {e}")   
 
 if __name__ == "__main__":
     # 设置日志
@@ -44,9 +42,12 @@ if __name__ == "__main__":
     
     # 检查推送方式
 
-    global use_project_push
+    # | KuroBBS_push_project | 0/1 | 是否使用项目自带推送(1=是) |
     use_project_push = os.environ.get('KuroBBS_push_project', '0') == '1'
-    
+    if use_project_push:
+        log_info("使用默认推送方式，不使用青龙推送")
+    else:
+        log_info("使用青龙自带推送")
     
 
 
