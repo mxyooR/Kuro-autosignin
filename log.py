@@ -16,7 +16,7 @@ def get_log_path():
     
     # 确保日志目录存在
     os.makedirs(log_dir, exist_ok=True)
-    return os.path.join(log_dir, f"kurobb_{datetime.now().strftime('%Y-%m-%d')}.log")
+    return os.path.join(log_dir, f"{datetime.now().strftime('%Y-%m-%d')}.log")
 
 def setup_logger(log_level=logging.INFO):
     """设置自定义日志记录器"""
