@@ -48,10 +48,8 @@ if __name__ == "__main__":
     use_project_push = os.environ.get('KuroBBS_push_project', '0') == '1'
     
     
-    # 读取推送配置
-    push_path = os.environ.get('KuroBBS_push_path', '/ql/data/config/')
-    push_name = os.environ.get('KuroBBS_push_name', 'push')
-    os.environ['PUSH_CONFIG_PATH'] = os.path.join(push_path, f"{push_name}.ini")
+
+
     
     # 加载推送配置并发送
     push_settings = load_push_config()
