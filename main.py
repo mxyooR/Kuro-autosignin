@@ -107,8 +107,15 @@ class SignInManager(ConfigManager):
 
         for file in os.listdir(self.config_dir):
             if file.endswith(".yaml"):
-                time.sleep(1)  # 避免请求过快
+                # 检查配置文件是否符合前缀要求
                 user_name = os.path.splitext(file)[0]
+                
+                # 如果设置了前缀，检查文件是否匹配前缀
+                if self.config_prefix and not user_name.startswith(self.config_prefix):
+                    log_info(f"跳过不匹配前缀的文件: {file}")
+                    continue
+                
+                time.sleep(1)  # 避免请求过快
                 msg = self.sign_in_user(user_name)
                 messages.append(msg)
 
@@ -117,9 +124,9 @@ class SignInManager(ConfigManager):
                 else:
                     success_users.append(user_name)
 
-                # 如果消息中包含“用户信息异常”，禁用该用户
+                # 如果消息中包含"用户信息异常"，禁用该用户
                 if "用户信息异常" in msg:
-                    log_error(f"{user_name} 返回‘用户信息异常’，系统将自动禁用该用户")
+                    log_error(f"{user_name} 返回'用户信息异常'，系统将自动禁用该用户")
                     self.disable_user(user_name)
 
         # 总结签到结果

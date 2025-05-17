@@ -33,10 +33,12 @@ if __name__ == "__main__":
     setup_ql_logger()
     log_info("库街区签到 - 青龙面板模式启动")
 
+    # 检查是否设置了配置文件前缀
+    config_prefix = os.environ.get('KuroBBS_config_prefix', '')
+    if config_prefix:
+        log_info(f"配置文件将使用前缀: {config_prefix}")
     
     # 创建签到管理器并执行
-
-    #让config去找默认path
     manager = SignInManager()
     messages = manager.run()
     

@@ -226,6 +226,7 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
 | KuroBBS_log_level | INFO | 日志级别(INFO/DEBUG/ERROR) |
 | KuroBBS_push_project | 0/1 | 是否使用项目自带推送(1=是) |
 | KuroBBS_push_path | /ql/data/config/ | 推送配置文件路径(选填) |
+| KuroBBS_config_prefix | kjq_ | 配置文件前缀(选填)，设置后只处理有此前缀的配置文件，可避免与其他工具的配置文件冲突 |
 
 
 #### 三、添加配置文件
@@ -337,7 +338,3 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
    docker-compose stop
    docker-compose pull && docker-compose up -d
    ```
-
-
-
-

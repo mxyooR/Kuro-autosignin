@@ -27,6 +27,11 @@ class ConfigManager:
         
         # 确保配置目录存在
         os.makedirs(self.config_dir, exist_ok=True)
+        
+        # 获取配置文件前缀
+        self.config_prefix = os.environ.get('KuroBBS_config_prefix', '')
+        if self.config_prefix:
+            log_info(f"配置文件将使用前缀: {self.config_prefix}")
 
     def load_user_config(self, user_name):
         """
@@ -121,6 +126,12 @@ class ConfigManager:
         禁用指定用户的配置文件
         :param user_name: 用户名（文件名，不含扩展名）
         """
+        # 检查是否应该禁用该配置文件
+        # 如果设置了前缀且不匹配，则跳过（保留MihoyoBBS工具配置）
+        if self.config_prefix and not user_name.startswith(self.config_prefix):
+            log_info(f"未禁用非前缀配置文件: {user_name}.yaml (保留MihoyoBBS工具配置)")
+            return
+        
         config_path = os.path.join(self.config_dir, f"{user_name}.yaml")
         if not os.path.exists(config_path):
             log_error(f"配置文件不存在: {config_path}")
@@ -137,4 +148,5 @@ class ConfigManager:
 
             log_info(f"{user_name} 的用户状态已成功更新为禁用")
         except Exception as e:
+            log_error(f"更新用户状态失败: {e}")
             log_error(f"更新用户状态失败: {e}")
