@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  kuro-sign:
+    build: .
+    container_name: kuro
+    environment:
+      - CRON_SIGNIN=30 9 * * *
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./config:/app/config
+    restart: unless-stopped
