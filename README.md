@@ -287,8 +287,14 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
    git clone https://github.com/mxyooR/Kuro-autosignin.git
    cd Kuro-autosignin
    ```
+
+2. **修改定时信息**（可选）：\
+   如果需要修改定时任务，可以在 `Dockerfile` 中的 `ENV CRON_SIGNIN` 行进行修改，格式为标准的 cron 表达式。例如，设置为每天早上9:30：
+    ```dockerfile
+    ENV CRON_SIGNIN="30 9 * * *"
+    ```
   
-2. **构建镜像**：
+3. **构建镜像**：
    ```bash
    docker build -t kuro-autosignin .
    ```
@@ -308,19 +314,10 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
 ### 使用 Docker Compose（可选）
 如果你希望更方便地管理容器，可以使用 Docker Compose。
 
-1. **创建 `docker-compose.yml` 文件**：
+1. **修改 `docker-compose.yml` 文件**：
+   与上文Dockerfile文件相同，此文件中的 `CRON_SIGNIN` 环境变量可以根据需要修改。
    ```yaml
-   version: '3.8'
-   services:
-     kuro-autosignin:
-       build: .
-       container_name: kuro-autosignin-container
-       environment:
-         - CRON_SIGNIN=30 9 * * *
-         - TZ=Asia/Shanghai
-       volumes:
-         - ./config:/app/config
-       restart: unless-stopped
+   - CRON_SIGNIN=30 9 * * *
    ```
 
 2. **启动容器**：

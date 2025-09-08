@@ -7,6 +7,9 @@ WORKDIR /app
 # 复制项目文件到容器中
 COPY . /app
 
+ENV CRON_SIGNIN='30 9 * * *'
+ENV TZ=Asia/Shanghai
+
 # 安装依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -16,4 +19,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # 运行主程序
-CMD ["python", "main.py"]
+CMD ["python", "task_scheduler.py"]
