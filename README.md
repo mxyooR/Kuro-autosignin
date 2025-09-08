@@ -299,12 +299,12 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_
    docker build -t kuro-autosignin .
    ```
 
-3. **运行容器**：
+4. **运行容器**：
    ```bash
    docker run -d --name kuro-autosignin-container kuro-autosignin
    ```
 
-4. **查看日志**：
+5. **查看日志**：
    ```bash
    docker logs kuro-autosignin-container
    ```
