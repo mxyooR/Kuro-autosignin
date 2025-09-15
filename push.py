@@ -399,7 +399,9 @@ def discord(send_title, push_message):
 
         http_proxy = cfg.get('discord', 'http_proxy', fallback=None)               
         session = get_new_session_use_proxy(http_proxy) if http_proxy else http
+        verify_ssl = cfg.getboolean('discord', 'verify_ssl', fallback=True)
         rep = session.post(
+            verify=verify_ssl,
             url=f'{cfg.get("discord", "webhook")}',
             headers={"Content-Type": "application/json; charset=utf-8"},
             json={
