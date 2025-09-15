@@ -59,7 +59,7 @@ def get_new_session(**kwargs):
         http_client.mount('https://', HTTPAdapter(max_retries=10))
         # 对于 requests，从 kwargs 中提取 proxies
         if 'proxies' in kwargs:
-        http_client.proxies.update(kwargs['proxies'])
+            http_client.proxies.update(kwargs['proxies'])
     return http_client
 
 
