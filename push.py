@@ -57,6 +57,9 @@ def get_new_session(**kwargs):
         http_client = requests.Session()
         http_client.mount('http://', HTTPAdapter(max_retries=10))
         http_client.mount('https://', HTTPAdapter(max_retries=10))
+        # 对于 requests，从 kwargs 中提取 proxies
+        if 'proxies' in kwargs:
+            http_client.proxies.update(kwargs['proxies'])
     return http_client
 
 
@@ -394,7 +397,11 @@ def discord(send_title, push_message):
     try:
         import pytz
 
-        rep = http.post(
+        http_proxy = cfg.get('discord', 'http_proxy', fallback=None)               
+        session = get_new_session_use_proxy(http_proxy) if http_proxy else http
+        verify_ssl = cfg.getboolean('discord', 'verify_ssl', fallback=True)
+        rep = session.post(
+            verify=verify_ssl,
             url=f'{cfg.get("discord", "webhook")}',
             headers={"Content-Type": "application/json; charset=utf-8"},
             json={
