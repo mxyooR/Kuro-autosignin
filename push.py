@@ -68,21 +68,32 @@ def is_module_imported(module_name):
 
 
 def get_new_session_use_proxy(http_proxy: str):
-    if is_module_imported("httpx"):
+    try:
+        # 优先使用httpx，在httpx无法使用的环境下使用requests
+        import httpx
+        
         proxies = {
             "http://": f'http://{http_proxy}',
             "https://": f'http://{http_proxy}'
         }
-        return get_new_session(proxies=proxies)
-        # httpx 版本大于0.26.0可用
-        # return get_new_session(proxy=f'http://{http_proxy}')
-    else:
-        session = get_new_session()
-        session.proxies = {
+        http_client = httpx.Client(timeout=20, transport=httpx.HTTPTransport(retries=10), follow_redirects=True,
+                                   proxies=proxies)
+        # 当openssl版本小于1.0.2的时候直接进行一个空请求让httpx报错
+        if get_openssl_version() < 102:
+            httpx.get()
+        return http_client
+    except (TypeError, ModuleNotFoundError) as e:
+        import requests
+        from requests.adapters import HTTPAdapter
+        
+        http_client = requests.Session()
+        http_client.mount('http://', HTTPAdapter(max_retries=10))
+        http_client.mount('https://', HTTPAdapter(max_retries=10))
+        http_client.proxies = {
             "http": f'http://{http_proxy}',
             "https": f'http://{http_proxy}'
         }
-        return session
+        return http_client
 
 
 http = get_new_session()
