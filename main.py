@@ -77,9 +77,9 @@ class SignInManager(ConfigManager):
             log_error(f"{user_name} 签到失败: {e}")
             msg += f"{user_name} 签到失败: {e}\n"
         
-        # 如果返回信息中包含用户信息异常，则禁用该用户
-        if "用户信息异常" in msg:
-            log_error(f"{user_name} 返回‘用户信息异常’，系统将自动禁用该用户")
+        # 如果返回信息中包含用户信息异常或登录已过期，则禁用该用户
+        if "用户信息异常" in msg or "登录已过期" in msg:
+            log_error(f"{user_name} 返回'用户信息异常'或'登录已过期'，系统将自动禁用该用户")
             self.disable_user(user_name)
         
         return msg
@@ -102,6 +102,7 @@ class SignInManager(ConfigManager):
         messages = []
         success_users = []
         error_users = []
+        disabled_users = []  # 新增：记录被禁用的用户
         log_info(datetime.datetime.now().strftime("%Y-%m-%d") + " 开始签到")
         messages.append(datetime.datetime.now().strftime("%Y-%m-%d") + " 开始签到任务\n")
 
@@ -119,20 +120,24 @@ class SignInManager(ConfigManager):
                 msg = self.sign_in_user(user_name)
                 messages.append(msg)
 
-                if "ERROR" in msg or "跳过签到" in msg:
+                # 跳过已禁用的用户，不加入任何统计
+                if "已禁用，跳过签到" in msg:
+                    continue
+
+                # 如果消息中包含"用户信息异常"或"登录已过期"，该用户已在sign_in_user中被禁用
+                if "用户信息异常" in msg or "登录已过期" in msg:
+                    disabled_users.append(user_name)  # 记录到禁用列表
+                elif "ERROR" in msg or "跳过签到" in msg:
                     error_users.append(user_name)
                 else:
                     success_users.append(user_name)
-
-                # 如果消息中包含"用户信息异常"，禁用该用户
-                if "用户信息异常" in msg:
-                    log_error(f"{user_name} 返回'用户信息异常'，系统将自动禁用该用户")
-                    self.disable_user(user_name)
 
         # 总结签到结果
         summary_message = datetime.datetime.now().strftime("%Y-%m-%d") + " 签到结果总结：\n"
         summary_message += f"签到成功的用户: {', '.join(success_users) if success_users else '无'}\n"
         summary_message += f"签到失败的用户: {', '.join(error_users) if error_users else '无'}\n"
+        if disabled_users:
+            summary_message += f"已自动禁用的用户: {', '.join(disabled_users)}\n"
         log_info(summary_message)
         messages.append(summary_message)
 
