@@ -1,26 +1,30 @@
+"""
+工具函数模块
+"""
 import socket
 import json
 import os
+from typing import Optional, Dict, Any
 from log import log_debug, log_error, log_info
 import yaml
 import requests
 import uuid
 
-def get_ip_address():
-        """
-        获取本机 IP 地址
-        :return: 本机 IP 地址
-        日志记录：无
-        """
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.connect(('8.8.8.8', 80))
-            ip_address = s.getsockname()[0]
-        except socket.error:
-            ip_address = '127.0.0.1'
-        finally:
-            s.close()
-        return ip_address
+
+def get_ip_address() -> str:
+    """
+    获取本机 IP 地址
+    :return: 本机 IP 地址
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('8.8.8.8', 80))
+        ip_address = s.getsockname()[0]
+    except socket.error:
+        ip_address = '127.0.0.1'
+    finally:
+        s.close()
+    return ip_address
 
 
 
@@ -51,96 +55,65 @@ def convert_json_to_yaml(json_path, output_dir="/config"):
             yaml.safe_dump(user, yml_file, allow_unicode=True, default_flow_style=False)
         log_info(f"已生成 YAML 文件: {output_path}")
 
-def get_user_info_by_token(token, devcode, distinct_id):
+def get_user_info_by_token(token: str, devcode: str, distinct_id: str) -> Optional[str]:
     """
-    根据 token 和用户 ID 获取用户信息
+    根据 token 获取用户信息
     :param token: 用户的 token
     :param devcode: 设备代码
     :param distinct_id: 唯一标识符
-    :return: 用户 ID 或错误信息
+    :return: 用户 ID 或 None
     """
-
-    url = "https://api.kurobbs.com/user/mineV2"
-    headers = {
-        "osversion": "Android",
-        "devcode": devcode,
-        "distinct_id": distinct_id,
-        "countrycode": "CN",
-        "ip": "10.0.2.233",
-        "model": "2211133C",
-        "source": "android",
-        "lang": "zh-Hans",
-        "version": "1.0.9",
-        "versioncode": "1090",
-        "token": token,
-        "content-type": "application/x-www-form-urlencoded",
-        "accept-encoding": "gzip",
-        "user-agent": "okhttp/3.10.0",
-    }
-
-    try:
-        response = requests.post(url, headers=headers)
-        response.raise_for_status()
-        result = response.json()
-
-        if result.get("code") == 200:
-            log_info("获取用户信息成功")
-            log_debug(f"用户信息: {result}")
-            user_id = result.get("data", {}).get("mine", {}).get("userId", "未知用户ID")
-            #print(f"用户ID: {user_id}")
-            return user_id
-        else:
-            log_error(f"获取用户信息失败: {result.get('msg')}")
-            return {"error": result.get("msg")}
-    except requests.RequestException as e:
-        log_error(f"请求失败: {e}")
-        return {"error": str(e)}
+    from http_client import KuroHttpClient
+    from constants import API
     
-def get_game_user_id(token,gameid,devcode,distinct_id):
+    try:
+        client = KuroHttpClient(token, devcode, distinct_id)
+        response = client.user_info_post(API.USER_MINE, raise_on_error=False)
+        
+        if response.is_success() and response.data:
+            user_id = response.data.get("mine", {}).get("userId")
+            if user_id:
+                log_info(f"获取用户信息成功，用户ID: {user_id}")
+                return user_id
+        
+        log_error(f"获取用户信息失败: {response.message}")
+        return None
+    except Exception as e:
+        log_error(f"请求失败: {e}")
+        return None
+    
+def get_game_user_id(token: str, game_id: int, devcode: str, distinct_id: str) -> Optional[str]:
     """
-    获取绑定游戏账号列表
+    获取绑定游戏账号角色ID
     :param token: 用户的 token
-    :param gameid: 游戏 id (战双 = 2, 鸣潮 = 3)
+    :param game_id: 游戏 id (战双 = 2, 鸣潮 = 3)
     :param devcode: 设备代码
     :param distinct_id: 唯一标识符
-    :return: 游戏账号 id 列表或错误信息
+    :return: 游戏角色 ID 或 None
     """
-    url = "https://api.kurobbs.com/user/role/findRoleList"
-    headers = {
-        "osversion": "Android",
-        "devcode": devcode,
-        "distinct_id": distinct_id,
-        "countrycode": "CN",
-        "ip": "10.0.2.233",
-        "model": "2211133C",
-        "source": "android",
-        "lang": "zh-Hans",
-        "version": "1.0.9",
-        "versioncode": "1090",
-        "token": token,
-        "content-type": "application/x-www-form-urlencoded; charset=utf-8",
-        "accept-encoding": "gzip",
-        "user-agent": "okhttp/3.10.0",
-    }
-    data = f"gameId={gameid}"
-
+    from http_client import KuroHttpClient
+    from constants import API
+    
     try:
-        response = requests.post(url, headers=headers, data=data)
-        response.raise_for_status()
-        result = response.json()
-
-        if result.get("code") == 200:
-            log_info("获取绑定游戏账号列表成功")
-            log_debug(f"绑定游戏账号列表: {result}")
-            role_ids = result.get("data", [])[0].get("roleId") if result.get("data") else None
-            #print(f"绑定游戏账号列表: {role_ids}")
-            return role_ids
-        else:
-            log_error(f"获取绑定游戏账号列表失败: {result.get('msg')}")
-            return None
-    except requests.RequestException as e:
+        client = KuroHttpClient(token, devcode, distinct_id)
+        response = client.user_info_post(
+            API.USER_ROLE_LIST,
+            data={"gameId": str(game_id)},
+            raise_on_error=False
+        )
+        
+        if response.is_success() and response.data:
+            roles = response.data
+            if roles and len(roles) > 0:
+                role_id = roles[0].get("roleId")
+                log_info(f"获取游戏{game_id}角色ID成功: {role_id}")
+                return role_id
+        
+        log_error(f"获取绑定游戏账号列表失败: {response.message}")
+        return None
+    except Exception as e:
         log_error(f"请求失败: {e}")
-        return {"error": str(e)}
+        return None
 
 
 
