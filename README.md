@@ -45,10 +45,10 @@
    ```
 
 2. **签到流程**  
-   主程序通过类 `SignInManager` 完成签到工作。  
+   主程序通过 `SignInManager` 完成签到工作。  
    - 对于每个用户，系统先读取其 YAML 配置文件，检查是否启用和配置完整性。  
    - 执行游戏签到（鸣潮、战双）以及库街区签到，并根据结果记录日志。  
-   - 如果签到返回信息中包含“用户信息异常”，系统会自动调用禁用操作，将该用户状态置为禁用。
+   - 如果签到返回信息中包含"用户信息异常"或"登录已过期"，系统会自动调用禁用操作，将该用户状态置为禁用。
 
 3. **命令行参数**  
    运行时可添加 `--debug` 或 `--error` 参数以调整日志级别。
@@ -208,12 +208,12 @@
 - 定时类型：crontab
 - 定时规则：1 7 * * *  (每天早上7:01执行)
 - 白名单：ql_main.py
-- 依赖文件：log|game_check_in|bbs_sign_in|push|tools|config|main
+- 依赖文件：log|push|tools|constants|models|http_client|config_manager|game_sign_in|forum_sign_in|sign_in_manager|main
 
 或者使用命令行添加：
 
 ```bash
-ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|game_check_in|bbs_sign_in|push|tools|config|main"
+ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|push|tools|constants|models|http_client|config_manager|game_sign_in|forum_sign_in|sign_in_manager|main"
 ```
 
 #### 二、环境变量配置
