@@ -78,7 +78,7 @@
 2. **安装依赖**
    确保项目依赖已安装：
    ```bash
-   pip3 install -r requirements.txt -t .
+   pip install . -t .
    ```
 
 3. **配置文件**
@@ -157,7 +157,7 @@
 ## 环境依赖
 
 - Python 3.9 以上  
-- 使用 `pip install -r requirements.txt` 安装依赖
+- 使用 `pip install .` 安装依赖
 
 ## 运行方式
 
@@ -173,7 +173,7 @@
 2. **安装依赖**  
    使用 pip 安装所需依赖：
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
 
 3. **配置文件**  
@@ -275,7 +275,7 @@ ql repo https://github.com/mxyooR/Kuro-autosignin.git "ql_main.py" "" "log|push|
 2. **工作目录**：将工作目录设置为 `/app`。
 3. **配置文件**：在本地设置好`config`配置文件，替换个人信息。
 4. **复制文件**：将项目文件复制到容器中。
-5. **安装依赖**：通过 `requirements.txt` 安装自动签到的项目依赖。
+5. **安装依赖**：通过 `pyproject.toml` 安装自动签到的项目依赖。
 6. **运行程序**：默认运行 `main.py`，你可以根据需要修改。
 
 ---

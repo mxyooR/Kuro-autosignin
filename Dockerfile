@@ -11,7 +11,7 @@ ENV CRON_SIGNIN='30 9 * * *'
 ENV TZ=Asia/Shanghai
 
 # 安装依赖
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install . --no-cache-dir
 
 # 暴露端口（如果需要）
 # EXPOSE 8000

@@ -1,6 +1,7 @@
 """
 青龙面板入口（适配重构版本）
 """
+
 import os
 import logging
 from log import setup_logger, log_info, log_error
@@ -11,10 +12,10 @@ import notify
 
 def setup_ql_logger():
     """设置青龙环境下的日志"""
-    log_level = os.environ.get('KuroBBS_log_level', 'INFO')
-    if log_level == 'DEBUG':
+    log_level = os.environ.get("KuroBBS_log_level", "INFO")
+    if log_level == "DEBUG":
         setup_logger(log_level=logging.DEBUG)
-    elif log_level == 'ERROR':
+    elif log_level == "ERROR":
         setup_logger(log_level=logging.ERROR)
     else:
         setup_logger(log_level=logging.INFO)
@@ -26,7 +27,7 @@ def get_config_dir() -> str:
     :return: 配置目录路径
     """
     file_path = os.path.dirname(os.path.abspath(__file__))
-    return os.environ.get('KuroBBS_config_path', os.path.join(file_path, 'config'))
+    return os.environ.get("KuroBBS_config_path", os.path.join(file_path, "config"))
 
 
 def get_push_config_path() -> str:
@@ -34,11 +35,11 @@ def get_push_config_path() -> str:
     获取推送配置文件路径
     :return: 推送配置文件路径
     """
-    push_dir = os.environ.get('KuroBBS_push_path')
+    push_dir = os.environ.get("KuroBBS_push_path")
     if push_dir:
-        return os.path.join(push_dir, 'push.ini')
+        return os.path.join(push_dir, "push.ini")
     else:
-        return os.path.join(get_config_dir(), 'push.ini')
+        return os.path.join(get_config_dir(), "push.ini")
 
 
 def load_push_config(config_path: str):
@@ -50,21 +51,22 @@ def load_push_config(config_path: str):
     if not os.path.exists(config_path):
         log_error(f"推送配置文件不存在: {config_path}")
         return None
-    
+
     try:
         import configparser
+
         config = configparser.ConfigParser()
         config.read(config_path, encoding="utf-8-sig")
-        
-        if 'setting' not in config:
+
+        if "setting" not in config:
             log_error("推送配置文件中缺少 [setting] 部分")
             return None
-        
+
         log_info("成功加载推送配置")
         return {
-            "enable": config.getboolean('setting', 'enable', fallback=False),
-            "push_level": config.getint('setting', 'push_level', fallback=1),
-            "push_server": config.get('setting', 'push_server', fallback=''),
+            "enable": config.getboolean("setting", "enable", fallback=False),
+            "push_level": config.getint("setting", "push_level", fallback=1),
+            "push_server": config.get("setting", "push_server", fallback=""),
         }
     except Exception as e:
         log_error(f"加载推送配置失败: {e}")
@@ -80,6 +82,7 @@ def ql_push(message: str, use_project_push: bool):
     if use_project_push:
         try:
             from push import push
+
             push(message)
             log_info("项目推送发送成功")
         except Exception as e:
@@ -101,33 +104,34 @@ def main():
     log_info("=" * 50)
 
     # 检查是否设置了配置文件前缀
-    config_prefix = os.environ.get('KuroBBS_config_prefix', '')
+    config_prefix = os.environ.get("KuroBBS_config_prefix", "")
     if config_prefix:
         log_info(f"配置文件将使用前缀: {config_prefix}")
-    
+
     try:
         # 初始化配置管理器
         config_dir = get_config_dir()
         config_manager = ConfigManager(config_dir)
-        
+
         # 初始化签到管理器
         sign_in_manager = SignInManager(config_manager)
-        
+
         # 执行签到
-        summary, messages = sign_in_manager.run_all()
-        
+        # summary, messages = sign_in_manager.run_all()
+        _, messages = sign_in_manager.run_all()
+
         # 检查推送方式
         # KuroBBS_push_project: 0/1, 是否使用项目自带推送(1=是)
-        use_project_push = os.environ.get('KuroBBS_push_project', '0') == '1'
+        use_project_push = os.environ.get("KuroBBS_push_project", "0") == "1"
         if use_project_push:
             log_info("使用项目自带推送方式")
         else:
             log_info("使用青龙自带推送方式")
-        
+
         # 加载推送配置并发送
         push_config_path = get_push_config_path()
         push_settings = load_push_config(push_config_path)
-        
+
         if push_settings and push_settings["enable"]:
             push_level = push_settings["push_level"]
             if push_level == 1:
@@ -141,11 +145,11 @@ def main():
                 ql_push(messages[-1], use_project_push)
         else:
             log_info("项目推送未启用或配置不正确")
-        
+
         log_info("=" * 50)
         log_info("签到任务执行完成")
         log_info("=" * 50)
-        
+
     except Exception as e:
         log_error(f"程序执行出错: {e}")
         raise

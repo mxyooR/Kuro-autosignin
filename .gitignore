@@ -1,24 +1,36 @@
-.venv
-cache
-data.json
-push.ini
-kurolog.log
-*.log
+# Python-generated files
 __pycache__/
-*.pyc
-*.pyo
-
-__pycache__/
-.vscode
-
-
 *.pyc
 *.pyo
 *.pyd
-/research
+*.py[oc]
+*.egg-info
+build/
+dist/
+wheels/
+
+# Virtual environments
+.venv
 /kuro-env
+uv.lock
+
+# Log files
+*.log
+kurolog.log
+
+# Configuration files
 *.cfg
-# tools
+*.yaml
+push.ini
+
+# Data files
+cache
+data.json
+
+# Development tool configurations
+.vscode
+
+# Project specific directories
+/research
 static/pictures/
 static/tmp/
-*.yaml

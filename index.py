@@ -1,9 +1,10 @@
 """
 云函数入口（适配重构版本）
 """
-import os
-from log import setup_logger, log_info, log_error
+
+# import os
 import logging
+from log import setup_logger, log_info, log_error
 from config_manager import ConfigManager
 from sign_in_manager import SignInManager
 from main import get_config_dir, get_push_config_path, load_push_config
@@ -21,26 +22,26 @@ def handler(event: dict, context: dict):
         # 设置日志
         setup_logger(log_level=logging.INFO)
         log_info("云函数签到任务启动")
-        
+
         # 初始化配置管理器
         config_dir = get_config_dir()
         config_manager = ConfigManager(config_dir)
-        
+
         # 初始化签到管理器
         sign_in_manager = SignInManager(config_manager)
-        
+
         # 执行签到任务
         summary, messages = sign_in_manager.run_all()
         log_info("签到任务执行完成")
-        
+
         # 根据 push 配置发送推送通知
         push_config_path = get_push_config_path()
         push_settings = load_push_config(push_config_path)
-        
+
         if push_settings and push_settings["enable"]:
             push_level = push_settings["push_level"]
             final_message = ""
-            
+
             if push_level == 1:
                 # 只推送总结
                 final_message = messages[-1]
@@ -55,15 +56,15 @@ def handler(event: dict, context: dict):
                 return {"status": 200, "message": "签到任务完成"}
             else:
                 final_message = "\n".join(messages)
-            
+
             if final_message:
                 push.push(final_message)
                 log_info("推送通知发送成功")
         else:
             log_info("推送服务未启用")
-        
+
         return {"status": 200, "message": "签到任务完成"}
-        
+
     except Exception as e:
         error_msg = f"签到任务执行失败: {e}"
         log_error(error_msg)
