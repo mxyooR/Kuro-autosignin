@@ -1,13 +1,14 @@
 import os
 import time
 import datetime
-from log import setup_logger, log_info
 import logging
-
 from crontab import CronTab
+
+from log import setup_logger, log_info
 
 setup_logger(log_level=logging.INFO)
 time_format = "%Y-%m-%d %H:%M:%S"
+
 
 def main():
     log_info("DOCKER定时模式已启用")
@@ -36,5 +37,5 @@ def main():
         next_run_time()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

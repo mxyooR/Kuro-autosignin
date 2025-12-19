@@ -1,0 +1,32 @@
+[project]
+name = "kuro-auto-signin-py"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    # --- Core Functionality: Network Requests ---
+    "httpx>=0.28.1",
+    "requests>=2.32.5",
+
+    # --- Core Functionality: Task Scheduling ---
+    "python-crontab>=3.3.0",
+
+    # --- Utilities and Configuration ---
+    "loguru>=0.7.3",
+    "pytz>=2025.2",
+    "pyyaml>=6.0.3",
+
+    # --- Type Hinting ---
+    "types-python-crontab>=3.3.0.20251115",
+    "types-pytz>=2025.2.0.20251108",
+    "types-pyyaml>=6.0.12.20250915",
+    "types-requests>=2.32.4.20250913",
+
+    # --- Platform-Specific ---
+    "win11toast>=0.36.2",
+]
+
+[[tool.uv.index]]
+url = "https://mirrors.cloud.tencent.com/pypi/simple/"
+default = true
