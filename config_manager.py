@@ -68,6 +68,13 @@ class ConfigManager:
                 log_error(f"配置文件为空: {config_path}")
                 return None
 
+            # 检查是否缺少 retry_times 字段，如果缺少则补充默认值并保存
+            if "retry_times" not in data:
+                data["retry_times"] = 3
+                log_info(f"{user_name} 配置缺少 retry_times 字段，已自动补充默认值 3")
+                with open(config_path, "w", encoding="utf-8") as f:
+                    yaml.safe_dump(data, f, allow_unicode=True, default_flow_style=False)
+
             config = UserConfig.from_dict(user_name, data)
             log_debug(f"成功加载配置: {user_name}")
             return config
