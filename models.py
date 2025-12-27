@@ -64,6 +64,7 @@ class UserConfig:
     auto_replenish_sign: bool = False
     game_info: Optional[Dict[str, str]] = None
     user_info: Optional[Dict[str, str]] = None
+    retry_times: Optional[int] = None
 
     def __post_init__(self):
         """初始化后处理"""
@@ -71,6 +72,8 @@ class UserConfig:
             self.game_info = {}
         if self.user_info is None:
             self.user_info = {}
+        if self.retry_times is None:
+            self.retry_times = 3
 
     @classmethod
     def from_dict(cls, name: str, data: dict) -> "UserConfig":
@@ -83,6 +86,7 @@ class UserConfig:
             auto_replenish_sign=data.get("auto_reple_sign", False),
             game_info=data.get("game_info", {}),
             user_info=data.get("user_info", {}),
+            retry_times=data.get("retry_times", 3),
         )
 
     def get_game_role_id(self, game_type: str) -> Optional[str]:
@@ -104,6 +108,14 @@ class UserConfig:
     def get_distinct_id(self) -> Optional[str]:
         """获取唯一标识"""
         return self.game_info.get("distinct_id")
+
+    def get_max_retries(self) -> int:
+        """获取最大重试次数（默认3）"""
+        try:
+            value = int(self.retry_times) if self.retry_times is not None else 3
+            return value if value >= 1 else 1
+        except Exception:
+            return 3
 
 
 @dataclass

@@ -5,6 +5,8 @@
 import socket
 import json
 import os
+import time
+import random
 from typing import (
     Optional,
     # Dict,
@@ -36,6 +38,19 @@ def get_ip_address() -> str:
     finally:
         s.close()
     return ip_address
+
+
+def random_delay(min_seconds: int = 5, max_seconds: int = 15) -> float:
+    """
+    生成随机延迟时间并等待
+    :param min_seconds: 最小延迟秒数
+    :param max_seconds: 最大延迟秒数
+    :return: 实际延迟的秒数
+    """
+    delay_seconds = random.uniform(min_seconds, max_seconds)
+    log_info(f"将在 {delay_seconds:.2f} 秒后重试...")
+    time.sleep(delay_seconds)
+    return delay_seconds
 
 
 # dev 暂时不用

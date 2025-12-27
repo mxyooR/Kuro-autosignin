@@ -90,6 +90,7 @@ class ConfigManager:
                 "enable": config.enable,
                 "completed": config.completed,
                 "auto_reple_sign": config.auto_replenish_sign,
+                "retry_times": config.retry_times,
                 "game_info": config.game_info,
                 "user_info": config.user_info,
             }

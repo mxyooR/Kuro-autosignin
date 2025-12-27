@@ -28,6 +28,9 @@
    # 是否自动补签
    auto_reple_sign: true
    
+   # 重试次数（失败后再次尝试的总次数，默认 3）
+   retry_times: 3
+
    # 游戏信息
    game_info:
      # distinct_id 和 devCode 可选，系统会随机生成
