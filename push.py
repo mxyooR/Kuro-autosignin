@@ -174,14 +174,13 @@ def pushplus(send_title, push_message):
 
 # pushme
 def pushme(send_title, push_message):
-    push_keys = cfg.get("setting", "push_keys")
+    push_keys = cfg.get("pushme", "pushme_keys")
     push_keys = list(map(str.strip, push_keys.split(",")))
 
     for key in push_keys:
-        print(key)
         try:
             http.post(
-                url="https://push.i-i.me",
+                url=cfg.get("pushme", "pushme_url"),
                 data={
                     "push_key": key,
                     "title": send_title,
@@ -516,7 +515,6 @@ def push(push_message):
             return 1
         log_info(f"{func_name} - 推送完毕......")
     return 0
-
 
 if __name__ == "__main__":
     push(f"推送验证{int(time.time())}")
