@@ -172,6 +172,26 @@ def pushplus(send_title, push_message):
     except Exception as e:
         log_error(f"Pushplus 推送失败: {e}")
 
+# pushme
+def pushme(send_title, push_message):
+    push_keys = cfg.get("setting", "push_keys")
+    push_keys = list(map(str.strip, push_keys.split(",")))
+
+    for key in push_keys:
+        print(key)
+        try:
+            http.post(
+                url="https://push.i-i.me",
+                data={
+                    "push_key": key,
+                    "title": send_title,
+                    "content": push_message,
+                },
+            )
+            log_info(f"Pushme 推送成功 (key: {key})")
+        except Exception as e:
+            log_error(f"Pushme 推送失败 (key: {key}): {e}")
+
 
 # cq http协议的推送
 def cqhttp(send_title, push_message):
@@ -500,3 +520,4 @@ def push(push_message):
 
 if __name__ == "__main__":
     push(f"推送验证{int(time.time())}")
+
