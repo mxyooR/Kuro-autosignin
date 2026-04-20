@@ -72,3 +72,32 @@ push_server=bark
 api_url=https://api.day.app
 token=XXX
 ```
+
+### Discord
+
+Discord Channel Webhook
+
+**webhook** 填写 Discord webhook 地址
+
+**username** 为可选项；如果填写，则覆盖 Discord webhook 默认昵称。不填写时使用 webhook 后台配置的昵称
+
+**avatar_url** 为可选项；如果填写，则覆盖 Discord webhook 默认头像。不填写时使用 webhook 后台配置的头像
+
+**http_proxy** 为可选项；如需代理推送可填写，例如 `127.0.0.1:1080`
+
+**verify_ssl** 为可选项；默认为 `true`，如需跳过 SSL 校验可设置为 `false`
+
+填写示例
+
+```ini
+[setting]
+enable=true
+push_server=discord
+
+[discord]
+webhook=https://discord.com/api/webhooks/your_channel_id_xxxxxx/your_webhook_token_xxxxxx
+#username=Kuro-autosignin
+#avatar_url=https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png
+#http_proxy=127.0.0.1:1080
+verify_ssl=false
+```

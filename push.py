@@ -71,6 +71,8 @@ def get_new_session(**kwargs):
         # 对于 requests，从 kwargs 中提取 proxies
         if "proxies" in kwargs:
             http_client.proxies.update(kwargs["proxies"])
+        if "verify" in kwargs:
+            http_client.verify = kwargs["verify"]
     return http_client
 
 
@@ -78,7 +80,7 @@ def is_module_imported(module_name):
     return module_name in sys.modules
 
 
-def get_new_session_use_proxy(http_proxy: str):
+def get_new_session_use_proxy(http_proxy: str, **kwargs):
     try:
         # 优先使用httpx，在httpx无法使用的环境下使用requests
         import httpx
@@ -108,6 +110,8 @@ def get_new_session_use_proxy(http_proxy: str):
             "http": f"http://{http_proxy}",
             "https": f"http://{http_proxy}",
         }
+        if "verify" in kwargs:
+            http_client.verify = kwargs["verify"]
         return http_client
 
 
@@ -428,34 +432,42 @@ def discord(send_title, push_message):
     try:
         import pytz
 
-        http_proxy = cfg.get("discord", "http_proxy", fallback=None)
-        session = get_new_session_use_proxy(http_proxy) if http_proxy else http
         verify_ssl = cfg.getboolean("discord", "verify_ssl", fallback=True)
+        http_proxy = cfg.get("discord", "http_proxy", fallback=None)
+        webhook_username = cfg.get("discord", "username", fallback=None)
+        webhook_avatar_url = cfg.get("discord", "avatar_url", fallback=None)
+        session = (
+            get_new_session_use_proxy(http_proxy, verify=verify_ssl)
+            if http_proxy
+            else get_new_session(verify=verify_ssl)
+        )
+        payload = {
+            "content": None,
+            "embeds": [
+                {
+                    "title": send_title,
+                    "description": push_message,
+                    "color": 1926125,
+                    "author": {
+                        "name": "Kuro-autosignin",
+                        "url": "https://github.com/mxyooR/Kuro-autosignin",
+                        "icon_url": "https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png",
+                    },
+                    "timestamp": datetime.now(timezone.utc)
+                    .astimezone(pytz.timezone("Asia/Shanghai"))
+                    .isoformat(),
+                }
+            ],
+            "attachments": [],
+        }
+        if webhook_username:
+            payload["username"] = webhook_username
+        if webhook_avatar_url:
+            payload["avatar_url"] = webhook_avatar_url
         rep = session.post(
-            verify=verify_ssl,
             url=f'{cfg.get("discord", "webhook")}',
             headers={"Content-Type": "application/json; charset=utf-8"},
-            json={
-                "content": None,
-                "embeds": [
-                    {
-                        "title": send_title,
-                        "description": push_message,
-                        "color": 1926125,
-                        "author": {
-                            "name": "Kuro-autosigin",
-                            "url": "https://github.com/mxyooR/Kuro-autosignin",
-                            "icon_url": "https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png",
-                        },
-                        "timestamp": datetime.now(timezone.utc)
-                        .astimezone(pytz.timezone("Asia/Shanghai"))
-                        .isoformat(),
-                    }
-                ],
-                "username": "Kuro-autosigin",
-                "avatar_url": "https://web-static.kurobbs.com/resource/prod/assets/main-img-Bp08JrXL.png",
-                "attachments": [],
-            },
+            json=payload,
         )
         if rep.status_code != 204:
             log_error(f"Discord 推送执行错误：{rep.text}")

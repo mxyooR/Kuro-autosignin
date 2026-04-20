@@ -96,6 +96,10 @@ key=你的qmsg酱key
 # Discord Channel Webhook
 [discord]
 webhook=https://discord.com/api/webhooks/your_channel_id_xxxxxx/your_webhook_token_xxxxxx
+# Optional: override webhook display name/avatar for this project only.
+# Leave both empty to use the webhook's default nickname and avatar.
+#username=
+#avatar_url=
 #给discord推送启用代理，取消注释即可启用
 #http_proxy=127.0.0.1:1080
 #添加SSL控制选项
