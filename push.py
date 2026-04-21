@@ -500,7 +500,7 @@ def wintoast(send_title, push_message):
     try:
         from win11toast import toast
 
-        toast(app_id="Kuro-autosigin", title=send_title, body=push_message, icon="")
+        toast(app_id="Kuro-autosignin", title=send_title, body=push_message, icon="")
         log_info("Windows Toast 推送成功")
     except Exception as e:
         log_error(f"Windows Toast 推送失败: {e}")
